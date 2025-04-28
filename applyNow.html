@@ -93,33 +93,29 @@
       <div class="rounded-md border mt-5 bg-white shadow-lg w-full max-w-4xl">
         <!-- IPO Information -->
         <div>
-          <div class="flex justify-between py-3 px-3 font-bold text-xl">
-            <div class="flex justify-between">
-              <div>
-                <div class="flex">
-                  <div class="px-5" id="companyName">Loading...</div>
-                  <span
-                    class="rounded-sm bg-indigo-50 px-1 text-[10px] font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10 flex text-center items-center my-2">MAINBOARD</span>
-                </div>
-                <div class="text-gray-500 text-sm px-5" id="priceRange">
-                  Loading...
-                </div>
-              </div>
+          
+          <div class="w-full flex flex-col p-2 px-2 py-2 " >
+           <div class="w-full flex items-center gap-2">
+            <span id="companyName" class="text-2xl font-bold">Loading...</span> 
+            <span id="mode"
+            class="rounded-sm bg-indigo-50 px-1 text-[10px] font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10 flex text-center items-center my-2"></span>
+        
+            <span id="status"
+            class="rounded-sm bg-indigo-50 px-1 text-[10px] font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10 flex text-center items-center my-2"></span>
+         
+           </div>
+            <div class="text-gray-500 text-lg " id="priceRange">
+              Loading...
             </div>
+          </div>
+          
+    
           </div>
           <div class="bg-gray-100 h-2"></div>
           <div class="px-5 py-2">
-            <div>
-              <div class="flex items-center gap-x-2 border-gray-900/5">
-                <div class="text-gray-600">Investor Type</div>
-              </div>
-              <div id="investorTypeContainer" class="flex flex-col"></div>
-            </div>
+           
 
-            <!-- <div class="text-gray-600">
-                            Maximum lots:
-                            <span id="lotSize" class="text-gray-600">Loading...</span>
-                        </div> -->
+          
           </div>
           <div class="flex justify-between px-5 py-2">
             <div class="text-gray-600">Number of lots</div>
@@ -129,7 +125,7 @@
                 class="rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">Loading...</span>
             </div>
           </div>
-          <div class="px-5">
+          <div class="px-5" style="border: 1px solid red;">
             <div class="grid grid-cols-12 gap-x-2">
               <div class="col-span-2">
                 <div id="decrement"
@@ -156,11 +152,11 @@
               </div>
             </div>
           </div>
-          <div class="w-full flex justify-between">
+          <div class="w-full flex justify-between" style="border: 1px solid red;">
             <div class="px-5 py-2 text-gray-600 lotsizeget text-sm flex justify-start"></div>
 
-            <div class="sumlots p-1 px-6">
-              <p class="text-gray-500" id="lotssum"></p>
+            <div class="sumlots p-1 flex gap-1 px-6">
+              <p class="text-gray-500" id="lotssum"></p><p class="text-gray-500">Shares</p>
             </div>
           </div>
           <div class="w-full p-1" id="limitationcontent">
@@ -170,12 +166,12 @@
             <fieldset class="mb-2">
               <div class="mt-6 flex gap-2">
                 <div class="flex items-center justify-center py-2 border-2 rounded-lg shadow w-full">
-                  <input id="manualprice" name="notification-method" type="radio" value="manual"
+                  <input id="manualprice" name="group0" type="radio" value="manual"
                     class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden">
                   <label for="manualprice" class="ml-3 block text-sm/6 font-medium text-gray-900">Manual Price</label>
                 </div>
                 <div class="flex items-center justify-center py-2 border-2 rounded-lg shadow w-full">
-                  <input id="bidprice" name="notification-method" type="radio" checked value="bid"
+                  <input id="bidprice" name="group0" type="radio" checked value="bid"
                     class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden">
                   <label for="bidprice" class="ml-3 block text-sm/6 font-medium text-gray-900">Bid Price</label>
 
@@ -237,9 +233,9 @@
               </svg>
             </span>
           </div>
-          <div class="px-4 font-bold">₹<input type="text" readonly id="totalAmount"> </div>
+          <div class="px-4 font-bold">₹<input type="text" readonly value="0" id="totalAmount"> </div>
         </div>
-        <button type="button" disabled
+        <button type="button" disabled 
           class="rounded-md custom-bg py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none mx-4 w-[90%] md:w-[95%] disabled:opacity-50 disabled:cursor-not-allowed"
           id="applyButton">
           Apply for IPO
@@ -264,6 +260,8 @@
     </div>
   </div>
 
+  <input type="text" class="hidden" id="minval">
+  <input type="text" class="hidden"  id="maxval">
 
 
   <script>
@@ -272,13 +270,12 @@
 
     document.addEventListener("DOMContentLoaded", () => {
 
-    
+    let no_of_share_amount;
 
       let lotmain;
       function getQueryParams() {
         const params = new URLSearchParams(window.location.search);
         return {
-
 
           isin: params.get("isin"),
           ipoSymbol: params.get("ipoSymbol"),
@@ -293,7 +290,7 @@
 
       function displayIpoDetails() {
         const ipoDetails = getQueryParams();
-        console.log(ipoDetails, "ipoDetails");
+      
 
 
         if (ipoDetails.source === "BSE") {
@@ -314,90 +311,21 @@
             .then((data) => {
               console.log(data.metaData[isin], "test");
               if (data.metaData[isin]) {
+                 document.getElementById('mode').innerText=urlParams.get("source")
+                 document.getElementById('status').innerText=data.metaData.subType || 'MAINBOARD'
                 document.getElementById("companyName").textContent = data.metaData[isin].companyName || "N/A";
                 document.getElementById("priceRange").textContent = `₹ ${data.metaData[isin].floorprice} - ₹ ${data.metaData[isin].ceilingprice}`;
                 const lotSize = parseInt(data.metaData[isin].tradinglot) || 0; // Set lotSize and ensure it's a number
-                lotmain = parseInt(data.metaData[isin].tradinglot) || 0;
-                document.getElementById("lotSize").textContent = lotSize || "N/A";
-                document.getElementById("bidPriceb").value = data.metaData[isin].ceilingprice || 0; // Set default bid price
-
-                document.querySelector(".lotsizeget").innerHTML = `Note : 1 lot = ${parseInt(data.metaData[isin].tradinglot)} shares`;
-
+              //  document.getElementById('.lotsizeget').innerText="vwioahoiw"
+          
                 // Set the UPI ID in the input field
                 const upiInput = document.getElementById("upiIdInput");
                 if (upiInput) {
                   upiInput.value = upiId; // Set the UPI ID in the input field
                 }
-
-
-                // Update total amount initially
+               
                 updateTotalAmount();
-
-                // Clear previous UPI information
-                const upiList = document.getElementById("upiList");
-                upiList.innerHTML = ""; // Clear previous entries
-                const upiSettings = []; // Array to hold UPI settings
-
-                // Create a container for investor type buttons
-                const investorTypeContainer = document.getElementById("investorTypeContainer");
-                investorTypeContainer.innerHTML = ""; // Clear previous buttons
-
-                // Check if data.category is defined and is an array
-                if (Array.isArray(data.metaData[isin].category)) {
-                  // Filter and display UPI information
-                  data.metaData[isin].category.forEach((setting) => {
-                    if (setting.asbanonasba == "1") {
-                      const listItem = document.createElement("li");
-                      listItem.textContent = `${setting.category}: Max UPI Limit ₹${setting.maxbidvalue}`;
-                      upiList.appendChild(listItem);
-
-                      // Store caCode and minValue in the upiSettings array
-                      upiSettings.push({
-                        caCode: setting.category,
-                        maxUpiLimit: setting.maxbidvalue,
-                      });
-
-                      // Create a button for each investor type
-                      const investorTypeButton = document.createElement("button");
-                      investorTypeButton.textContent = setting.category; // Use caCode for button text
-                      investorTypeButton.className = "my-1 inline-flex items-center border border-blue-500 rounded-md bg-white px-4 py-2 text-sm font-medium text-blue-700 cursor-pointer mr-2 focus:outline-blue-700";
-                      investorTypeButton.dataset.investorType = setting.category; // Store the investor type in data attribute
-                      investorTypeButton.dataset.minValue = setting.maxbidvalue;
-
-                      // Add click event listener to the button
-                      investorTypeButton.addEventListener("click", () => {
-                        selectedInvestorType = investorTypeButton.dataset.investorType; // Set the selected investor type
-                        selectedMinValue = parseFloat(investorTypeButton.dataset.minValue); // Get the corresponding minValue
-                        updateMaxLots(); // Update the maximum lots based on the selected investor type
-
-                        // Remove active class from all buttons
-                        const allInvestorTypeButtons = document.querySelectorAll("#investorTypeContainer button");
-                        allInvestorTypeButtons.forEach((button) => {
-                          button.classList.remove("border-blue-500", "bg-blue-100"); // Remove blue border and background color
-                          button.classList.add("bg-white"); // Reset background color
-                        });
-
-                        // Add active class to the selected button
-                        investorTypeButton.classList.add("border-blue-500", "bg-blue-100"); // Add blue border and background color
-                        investorTypeButton.classList.remove("bg-white"); // Change background color if needed
-                      });
-
-                      // Append the button to the investor type container
-                      investorTypeContainer.appendChild(investorTypeButton);
-                    }
-                  });
-                } else {
-                  console.warn("data.category is not an array or is undefined");
-                }
-
-                // Show investor type buttons if there are investor types with allowUpi
-                if (upiSettings.length > 0) {
-                  investorTypeContainer.style.display = "block"; // Show the container
-                  selectedMinValue = parseFloat(upiSettings[0].maxUpiLimit); // Set the initial selectedMinValue to the first investor type's minValue
-                  updateMaxLots(); // Update the maximum lots based on the first investor type
-                } else {
-                  investorTypeContainer.style.display = "none"; // Hide the container
-                }
+              
               }
             })
             .catch((error) => {
@@ -441,8 +369,13 @@
             document.querySelector(".lotsizeget").innerHTML = `Note : 1 lot = ${parseInt(data.nse.lotSize)} shares`;
 
             document.getElementById("lotSize").textContent = lotSize || "N/A";
+            document.getElementById('mode').innerText=urlParams.get("source")
+            document.getElementById('status').innerText=data.nse.subType || 'MAINBOARD'
             const minPrice = data.nse.minPrice || 0;
             const maxPrice = data.nse.maxPrice || 0;
+
+            document.getElementById('minval').value=data.nse.minPrice
+            document.getElementById('maxval').value=data.nse.maxPrice
             const priceInput = document.getElementById('price');
             const manualRadio = document.getElementById('manualprice');
             const bidRadio = document.getElementById('bidprice');
@@ -451,15 +384,17 @@
               if (manualRadio.checked) {
                 priceInput.value = minPrice;
                 priceInput.readOnly = false;
-                updateTotalAmount(lotSize, minPrice, maxPrice);
+                
               } else if (bidRadio.checked) {
                 // If bid price is selected, set maxPrice and make the input readonly
                 priceInput.value = maxPrice;
                 priceInput.readOnly = true;
-                updateTotalAmount(lotSize,minPrice, maxPrice);
+                
               }
-            }
 
+              updateTotalAmount(lotSize);
+              checkInputs();
+            }
 
 
             togglePriceInput();
@@ -469,80 +404,7 @@
             bidRadio.addEventListener('change', togglePriceInput);
 
 
-            // Set the UPI ID in the input field
-            const upiInput = document.getElementById("upiIdInput");
-            if (upiInput) {
-              upiInput.value = upiId; // Set the UPI ID in the input field
-            }
-
-            // Update total amount initially
-            
-
-            // Clear previous UPI information
-            const upiList = document.getElementById("upiList");
-            upiList.innerHTML = ""; // Clear previous entries
-            const upiSettings = []; // Array to hold UPI settings
-
-            // Create a container for investor type buttons
-            const investorTypeContainer = document.getElementById("investorTypeContainer");
-            investorTypeContainer.innerHTML = ""; // Clear previous buttons
-
-            // Check if subCategorySettings is an array
-            if (data.subCategorySettings && Array.isArray(data.subCategorySettings)) {
-              data.subCategorySettings.forEach((setting) => {
-                if (setting.allowUpi) {
-                  const listItem = document.createElement("li");
-                  listItem.textContent = `${setting.caCode}: Max UPI Limit ₹${setting.maxUpiLimit}`;
-                  upiList.appendChild(listItem);
-
-                  // Store caCode and minValue in the upiSettings array
-                  upiSettings.push({
-                    caCode: setting.caCode,
-                    maxUpiLimit: setting.maxUpiLimit,
-                  });
-
-                  // Create a button for each investor type
-                  const investorTypeButton = document.createElement("button");
-                  investorTypeButton.textContent = setting.caCode; // Use caCode for button text
-                  investorTypeButton.className = "my-1 inline-flex items-center border border-blue-500 rounded-md bg-white px-4 py-2 text-sm font-medium text-blue-700 cursor-pointer mr-2 focus:outline-blue-700";
-                  investorTypeButton.dataset.investorType = setting.caCode; // Store the investor type in data attribute
-                  investorTypeButton.dataset.minValue = setting.maxUpiLimit;
-
-                  // Add click event listener to the button
-                  investorTypeButton.addEventListener("click", () => {
-                    selectedInvestorType = investorTypeButton.dataset.investorType; // Set the selected investor type
-                    selectedMinValue = parseFloat(investorTypeButton.dataset.minValue); // Get the corresponding minValue
-                    updateMaxLots(); // Update the maximum lots based on the selected investor type
-
-                    // Remove active class from all buttons
-                    const allInvestorTypeButtons = document.querySelectorAll("#investorTypeContainer button");
-                    allInvestorTypeButtons.forEach((button) => {
-                      button.classList.remove("border-blue-500", "bg-blue-100"); // Remove blue border and background color
-                      button.classList.add("bg-white"); // Reset background color
-                    });
-
-                    // Add active class to the selected button
-                    investorTypeButton.classList.add("border-blue-500", "bg-blue-100"); // Add blue border and background color
-                    investorTypeButton.classList.remove("bg-white"); // Change background color if needed
-                  });
-
-                  // Append the button to the investor type container
-                  investorTypeContainer.appendChild(investorTypeButton);
-                }
-              });
-            } else {
-              console.warn("data.subCategorySettings is not an array or is undefined");
-            }
-
-            // Show investor type buttons if there are investor types with allowUpi
-            if (upiSettings.length > 0) {
-              investorTypeContainer.style.display = "block"; // Show the container
-              selectedMinValue = parseFloat(upiSettings[0].maxUpiLimit); // Set the initial selectedMinValue to the first investor type's minValue
-              updateMaxLots(); // Update the maximum lots based on the first investor type
-            } else {
-              investorTypeContainer.style.display = "none"; // Hide the container
-            }
-          }
+                  }
         } catch (error) {
           console.error("Error fetching IPO info:", error);
         }
@@ -599,15 +461,6 @@
 
       }
 
-      function getval(minprice, maxprice) {
-        console.log(minprice, maxprice)
-
-      }
-
-
-
-
-
       function showModal(title, message) {
         document.getElementById("modalTitle").textContent = title;
         document.getElementById("modalMessage").textContent = message;
@@ -619,7 +472,7 @@
       });
 
       const lotCountDisplay = document.getElementById("lotCount");
-      console.log("eorgjo", lotCountDisplay)
+    
       let lotCount = 1;
 
       const incrementButton = document.getElementById("increment");
@@ -629,26 +482,32 @@
       let selectedMinValue = null;
       const upiSettings = [];
 
-      function updateTotalAmount(lotSize, min, max) {
-        
+      function updateTotalAmount(lotSize) {
+        const min=document.getElementById('minval').value
+        const max=document.getElementById('maxval').value
+       
         const priceInput = document.getElementById('price');
         const lot_size = lotSize * lotCount;
       
-      console.log("globalval",lot_size)
+
         const price = document.getElementById('price').value
         document.getElementById('totalAmount').value = lot_size * price;
-        document.getElementById('lotssum').innerText = lot_size + " " + 'Shares';
        
+        document.getElementById('lotssum').innerText = lot_size ;
+        no_of_share_amount= lot_size
         priceInput.addEventListener('input', function (event) {
-        
+          
           const price = parseFloat(priceInput.value);
+         
           if (price >= min && price <= max) {
-            console.log("etvhiu", lot_size)
+            
             document.getElementById('totalAmount').value = lot_size * price;
             document.getElementById('errormsg').style.display = 'none'
            
+           
           }
           else {
+           
             document.getElementById('totalAmount').value = "";
             document.getElementById('errormsg').style.display = 'block'
           
@@ -658,7 +517,7 @@
 
 
       incrementButton.addEventListener("click", () => {
-        
+       
         const maxLotSize = parseInt(
           document.getElementById("lotSize").textContent
         );
@@ -668,124 +527,25 @@
           updateTotalAmount(
             parseInt(document.getElementById("lotSize").textContent)
           );
+          checkInputs()
         }
       });
 
       decrementButton.addEventListener("click", () => {
-        checkInputs()
+   
         if (lotCount > 1) {
           lotCount--;
           lotCountDisplay.textContent = lotCount;
           updateTotalAmount(
             parseInt(document.getElementById("lotSize").textContent)
           );
+          checkInputs()
         }
       });
 
-      // Function to update the maximum lots based on the selected investor type
-      function updateMaxLots() {
-        const lotSize = lotmain;
-        const bidPrice =
-          parseFloat(document.getElementById("bidPrice").value) || 0;
+            displayIpoDetails();
 
-        let maxLots = 0; // Initialize maxLots
-
-        // Calculate maxLots based on selectedMinValue
-        if (lotSize > 0 && bidPrice > 0 && selectedMinValue > 0) {
-          maxLots = Math.floor(selectedMinValue / (lotSize * bidPrice));
-        }
-
-        // Update the UI with max lots
-        document.getElementById("lotSize").textContent =
-          maxLots > 0 ? maxLots : "N/A"; // Ensure maxLots is displayed correctly
-      }
-
-      document.getElementById("applyButton").addEventListener("click", () => {
-        const upiId = document.getElementById("upiIdInput").value.trim();
-        const button = document.getElementById("applyButton");
-
-        // Change button text
-        button.textContent = "Processing..."; // Change text to indicate processing
-
-        // Add loader class
-        button.classList.add("loader");
-
-        // Optionally, you can disable the button to prevent multiple clicks
-        button.disabled = true;
-
-        // Simulate a delay for demonstration (e.g., an API call)
-        setTimeout(() => {
-          // Reset button text and remove loader class after some time
-          button.textContent = "Apply for IPO";
-          button.classList.remove("loader"); // Remove loading animation
-          button.disabled = false; // Re-enable the button
-        }, 3000); // Change this duration as needed
-
-        if (!upiId) {
-          alert("Please enter a valid UPI ID."); // Alert if UPI ID is not available
-
-        }
-        else {
-          document.getElementById('applyButton').disabled = true
-        }
-
-        const clientCode = "GZ10219";
-        const category = "IND";
-        const qty = lotCount;
-        const price = document.getElementById("bidPrice").value || 290;
-        const cutOff = true;
-
-        const isinElement = document.getElementById("isin");
-        const ipoSymbolElement = document.getElementById("ipoSymbol");
-
-        const isin = isinElement ? isinElement.value : "INE0R4L01018"; // Default value
-        const ipoSymbol = ipoSymbolElement ? ipoSymbolElement.value : "DENTA"; // Default value
-        const val = qty * lotmain;
-
-        const formData = new FormData();
-        formData.append("clientCode", clientCode);
-        formData.append("isin", isin);
-        formData.append("ipoSymbol", ipoSymbol);
-        formData.append("upiId", upiId); // Use the dynamically set UPI ID
-        formData.append("category", category);
-        formData.append("qty", val);
-        formData.append("price", price);
-        formData.append("cutOff", cutOff);
-
-        fetch("https://ipo.gwcindia.in/nse-api/api-apply-ipo.php", {
-          method: "POST",
-          headers: {
-            Cookie: "PHPSESSID=f84t4fg8ir4sa2eagd3pp1k3g7",
-          },
-          body: formData,
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.status === "success") {
-              showModal(data.status, data.message);
-            } else {
-              showModal("Error", data.message || "An error occurred.");
-            }
-            console.log(data);
-          })
-          .catch((error) => {
-            showModal("Error", "Error submitting application!");
-            console.error(error);
-          });
-      });
-
-      document
-        .querySelector(".clickable-div")
-        .addEventListener("click", function () {
-          const target = this.getAttribute("data-target");
-          window.location.href = target; // Navigate to the new page
-        });
-      displayIpoDetails();
-
-    });
-
-
-
+      
     const upid = document.getElementById('upiIdInput')
     const price = document.getElementById('price')
     const applybutton = document.getElementById('applyButton')
@@ -793,12 +553,15 @@
     const bidRadio = document.getElementById('bidprice');
 
 
+
+
     function getCheckedRadioValue(groupName) {
       const radios = document.getElementsByName(groupName);
+      const checkedRadio = document.querySelector(`input[name="${groupName}"]:checked`);
       for (const radio of radios) {
         if (radio.checked) {
           return {
-          
+            categoriesvalue: checkedRadio.value,
             minValue: radio.getAttribute('data-min'),
             maxValue: radio.getAttribute('data-max')
           };
@@ -807,30 +570,35 @@
       return null;
     }
 
-  
+
     function checkInputs() {
-     const selectedSubCategory = getCheckedRadioValue('group1')
-     const total=document.getElementById('totalAmount').value
-    //  console.log("oirj", total)
-      if (selectedSubCategory) {
-        // console.log(selectedSubCategory.total);  
-        // console.log(selectedSubCategory.minValue);  
-        // console.log(selectedSubCategory.maxValue);  
+  const selectedSubCategory = getCheckedRadioValue('group1');
+  const totalAmount = price.value * no_of_share_amount;
+  const min = parseFloat(document.getElementById('minval').value);  // Get min value
+  const max = parseFloat(document.getElementById('maxval').value);  // Get max value
 
-      } else {
-        //console.log('No radio button selected');
-      }
+ 
+  const isValid =
+    upid.value &&
+    price.value &&
+    price.value >= min &&   // Check totalAmount within the min range
+    price.value <= max && 
+    (manualRadio.checked || bidRadio.checked) &&
+    selectedSubCategory &&
+    totalAmount >= selectedSubCategory.minValue &&
+    totalAmount <= selectedSubCategory.maxValue 
+   
 
-      if (upid.value && price.value && (manualRadio.checked || bidRadio.checked) && selectedSubCategory) {
-        applybutton.disabled = false;
-        applybutton.classList.remove('bg-gray-400', 'cursor-not-allowed');
-        applybutton.classList.add('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
-      } else {
-        applybutton.disabled = true;
-        applybutton.classList.add('bg-gray-400', 'cursor-not-allowed');
-        applybutton.classList.remove('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
-      }
-    }
+  if (isValid) {
+    applybutton.disabled = false;
+    applybutton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+    applybutton.classList.add('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
+  } else {
+    applybutton.disabled = true;
+    applybutton.classList.add('bg-gray-400', 'cursor-not-allowed');
+    applybutton.classList.remove('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
+  }
+}
 
     upid.addEventListener('input', checkInputs);
     price.addEventListener('input', checkInputs);
@@ -842,6 +610,74 @@
         checkInputs();
       }
     });
+
+
+    function nseapply(){
+  
+      // const apiurl='https://ipo.gwcindia.in/v3/api-modify-ipo.php'
+      // const formData=new FormData()
+      // formData.append('clientCode', localStorage.getItem('clientcode'))
+      // formData.append('isin', urlParams.get("isin"))
+      // formData.append('ipoSymbol')
+      // formData.append('upiId', upid.value)
+      // formData.append('category')
+      // formData.append('qty')
+      // formData.append('price', price.value)
+      // formData.append('cutOff')
+    }
+
+    });
+
+  document.getElementById('applyButton').addEventListener('click', async function() {
+  const urlParams = new URLSearchParams(window.location.search);
+
+  const checkedRadio = document.querySelector(`input[name="group1"]:checked`);
+  const checkedRadio2 = document.querySelector(`input[name="group0"]:checked`);
+  const upiId = document.getElementById('upiIdInput').value.trim();
+  const qty = document.getElementById('lotssum').innerText.trim();
+  const priceInput = document.getElementById('price').value; // Assuming you have an input for price
+  
+
+  if (!checkedRadio || !checkedRadio2) {
+    alert('Please select both category and cutoff/bid options.');
+    return;
+  }
+  
+  if (!upiId) {
+    alert('Please enter UPI ID.');
+    return;
+  }
+
+  let cutoff = (checkedRadio2.value === 'bid') ? 'true' : 'false';
+
+  const apiurl = 'https://ipo.gwcindia.in/nse-api/api-modify-ipo.php';
+  const formData = new FormData();
+  formData.append('clientCode', localStorage.getItem('clientcode'));
+  formData.append('isin', urlParams.get('isin'));
+  formData.append('ipoSymbol', urlParams.get('ipoSymbol'));
+  formData.append('upiId', upiId);
+  formData.append('category', checkedRadio.value);
+  formData.append('qty', qty);
+  formData.append('price', priceInput);
+  formData.append('cutOff', cutoff);
+
+  try {
+    const response = await fetch(apiurl, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error('Network error, please try again. Status: ' + response.status);
+    }
+
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+});
+
   </script>
 </body>
 
