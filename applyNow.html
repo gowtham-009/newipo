@@ -152,7 +152,7 @@
               </div>
             </div>
           </div>
-          <div class="w-full flex justify-between" style="border: 1px solid red;">
+          <div class="w-full flex justify-between" >
             <div class="px-5 py-2 text-gray-600 lotsizeget text-sm flex justify-start"></div>
 
             <div class="sumlots p-1 flex gap-1 px-6">
@@ -264,6 +264,9 @@
   <input type="text" class="hidden"  id="maxval">
 
 
+  <input type="text" class="hidden" id="minvalbse">
+  <input type="text" class="hidden"  id="maxvalbse">
+
   <script>
 
 const clickableDivs = document.querySelectorAll(".clickable-div");
@@ -316,21 +319,61 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
             .then((response) => response.json())
             .then((data) => {
               console.log(data.metaData[isin], "test");
+              limitationfieldbse(data.metaData[isin], 'group1')
               if (data.metaData[isin]) {
                  document.getElementById('mode').innerText=urlParams.get("source")
                  document.getElementById('status').innerText=data.metaData.subType || 'MAINBOARD'
                 document.getElementById("companyName").textContent = data.metaData[isin].companyName || "N/A";
                 document.getElementById("priceRange").textContent = `₹ ${data.metaData[isin].floorprice} - ₹ ${data.metaData[isin].ceilingprice}`;
+                document.getElementById('lotSize').innerText=data.metaData[isin].tradinglot
+                document.getElementById('minvalbse').value=data.metaData[isin].floorprice
+                document.getElementById('maxvalbse').value=data.metaData[isin].ceilingprice
                 const lotSize = parseInt(data.metaData[isin].tradinglot) || 0; // Set lotSize and ensure it's a number
-              //  document.getElementById('.lotsizeget').innerText="vwioahoiw"
-          
+              
+                document.querySelector(".lotsizeget").innerHTML=`Note : 1 lot = ${parseInt(data.metaData[isin].tradinglot)} shares`
+
+
+
+                const minPrice = data.metaData[isin].floorprice || 0;
+            const maxPrice = data.metaData[isin].ceilingprice || 0;
+
+            document.getElementById('minval').value=minPrice
+            document.getElementById('maxval').value=maxPrice
+            const priceInput = document.getElementById('price');
+            const manualRadio = document.getElementById('manualprice');
+            const bidRadio = document.getElementById('bidprice');
+
+            function togglePriceInputbse() {
+              if (manualRadio.checked) {
+                priceInput.value = minPrice;
+                priceInput.readOnly = false;
+                
+              } else if (bidRadio.checked) {
+                // If bid price is selected, set maxPrice and make the input readonly
+                priceInput.value = maxPrice;
+                priceInput.readOnly = true;
+                
+              }
+
+              updateTotalAmount(lotSize);
+             checkInputs();
+            }
+
+
+            togglePriceInputbse();
+
+
+            manualRadio.addEventListener('change', togglePriceInputbse);
+            bidRadio.addEventListener('change', togglePriceInputbse);
+
+         
                 // Set the UPI ID in the input field
                 const upiInput = document.getElementById("upiIdInput");
                 if (upiInput) {
                   upiInput.value = upiId; // Set the UPI ID in the input field
                 }
                
-                updateTotalAmount();
+             
               
               }
             })
@@ -370,7 +413,7 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
             document.getElementById("companyName").textContent = data.nse.ipoName || "N/A";
             document.getElementById("priceRange").textContent = `₹ ${data.nse.minPrice} - ₹ ${data.nse.maxPrice}`;
             const lotSize = parseInt(data.nse.lotSize) || 0; // Set lotSize and ensure it's a number
-
+          
             lotmain = parseInt(data.nse.lotSize) || 0;
             document.querySelector(".lotsizeget").innerHTML = `Note : 1 lot = ${parseInt(data.nse.lotSize)} shares`;
 
@@ -417,6 +460,7 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
       };
 
       function limitationfield(fildsvalue, radioGroupName) {
+      
         const limitcontent = document.getElementById('limitationcontent');
         limitcontent.innerHTML = ''; // Clear previous content
 
@@ -467,6 +511,59 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
 
       }
 
+
+      function limitationfieldbse(fildsvalue, radioGroupName) {
+        console.log("lkjbv",fildsvalue)
+       const limitcontent = document.getElementById('limitationcontent');
+       limitcontent.innerHTML = ''; // Clear previous content
+
+       const CategorySettings = fildsvalue.category
+
+       const gridContainer = document.createElement('div');
+      gridContainer.className = 'grid grid-cols-2 gap-4 p-4';
+
+      CategorySettings.forEach((categories, index) => {
+         if (categories.asbanonasba=='1') {
+          const card = document.createElement('div');
+          card.className = 'border rounded-lg p-4 bg-white shadow hover:shadow-lg transition';
+
+          const radioId = `radio_${index}_${categories.asbanonasba}`; // Unique ID with index!
+
+          card.innerHTML = `
+      <div class="flex items-center">
+        <input 
+          id="${radioId}"
+          value="${categories.category}"
+          name="${radioGroupName}"
+          type="radio"
+          class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white 
+          before:absolute before:inset-1 before:rounded-full before:bg-white 
+          checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline 
+          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 
+          disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 
+          forced-colors:appearance-auto forced-colors:before:hidden 
+          [&:not(:checked)]:before:hidden"
+          data-min="${categories.minbidvalue}"
+          data-max="${categories.maxbidvalue}"
+        >
+        <label for="${radioId}" class="ml-3 block text-sm/6 font-medium text-gray-900">${categories.category}</label>
+      </div>
+
+      <div class="w-full px-6">
+        <span>Min value: ${categories.minbidvalue}</span><br>
+        <span>Max value: ${categories.maxbidvalue}</span>
+      </div>
+    `;
+
+          gridContainer.appendChild(card);
+        }
+      });
+
+      limitcontent.appendChild(gridContainer);
+
+
+    }
+
       function showModal(title, message) {
         document.getElementById("modalTitle").textContent = title;
         document.getElementById("modalMessage").textContent = message;
@@ -489,8 +586,20 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
       const upiSettings = [];
 
       function updateTotalAmount(lotSize) {
-        const min=document.getElementById('minval').value
-        const max=document.getElementById('maxval').value
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const type=urlParams.get('source')
+        let min
+        let max
+        if(type=='NSE'){
+           min=document.getElementById('minval').value
+           max=document.getElementById('maxval').value
+        }
+       else {
+           min=document.getElementById('minvalbse').value
+           max=document.getElementById('maxvalbse').value
+        }
+      
        
         const priceInput = document.getElementById('price');
         const lot_size = lotSize * lotCount;
@@ -610,7 +719,6 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
     price.addEventListener('input', checkInputs);
     manualRadio.addEventListener('input', checkInputs);
     bidRadio.addEventListener('input', checkInputs);
-
     document.addEventListener('change', function (e) {
       if (e.target.name === 'group1') { // change to your real group name
         checkInputs();
@@ -621,26 +729,42 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
     document.getElementById('applyButton').addEventListener('click', async function() {
   const urlParams = new URLSearchParams(window.location.search);
 
-  const checkedRadio = document.querySelector(`input[name="group1"]:checked`);
-  const checkedRadio2 = document.querySelector(`input[name="group0"]:checked`);
+  const checkedRadio = document.querySelector('input[name="group1"]:checked');
+  console.log("ifvaheiu",checkedRadio.value)
+  const checkedRadio2 = document.querySelector('input[name="group0"]:checked');
   const upiId = document.getElementById('upiIdInput').value.trim();
   const qty = document.getElementById('lotssum').innerText.trim();
-  const priceInput = document.getElementById('price').value; // Assuming you have an input for price
-  
+  const priceInput = document.getElementById('price').value.trim();
 
   if (!checkedRadio || !checkedRadio2) {
     alert('Please select both category and cutoff/bid options.');
     return;
   }
-  
+
   if (!upiId) {
     alert('Please enter UPI ID.');
     return;
   }
 
-  let cutoff = (checkedRadio2.value === 'bid') ? 'true' : 'false';
+  const cutoff = (checkedRadio2.value === 'bid') ? 'true' : 'false';
 
-  const apiurl = 'https://ipo.gwcindia.in/nse-api/api-apply-ipo.php';
+  const type = urlParams.get('source');
+  let apiurl = '';
+  let authorization = '';
+
+  if (type === 'BSE') {
+   
+    authorization = '21279C8DC0753CD1A90DEBF3C1C5CEDB8B5B77E0455EE804C9CA03BB706CD02A';
+    apiurl = 'https://ipo.gwcindia.in/api/bse/v1/applyipo';
+  } else if (type === 'NSE') {
+    apiurl = 'https://ipo.gwcindia.in/nse-api/api-apply-ipo.php';
+    // Set a default or blank Authorization if needed for NSE
+    authorization = '';
+  } else {
+    alert('Unknown IPO source.');
+    return;
+  }
+
   const formData = new FormData();
   formData.append('clientCode', localStorage.getItem('clientcode'));
   formData.append('isin', urlParams.get('isin'));
@@ -652,8 +776,15 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
   formData.append('cutOff', cutoff);
 
   try {
+    const headers = {};
+
+    if (authorization) {
+      headers['Authorization'] = authorization;
+    }
+
     const response = await fetch(apiurl, {
       method: 'POST',
+      headers: headers,
       body: formData
     });
 
@@ -663,11 +794,14 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
 
     const data = await response.json();
     console.log(data);
+
+    const title = "";
+    showModal(title, data.message);
+    
   } catch (error) {
     console.error('Error:', error.message);
   }
 });
-
 
     });
 
