@@ -381,107 +381,64 @@
       const bseApiUrl = "https://ipo.gwcindia.in/api/bse/v1/ipolist";
 
       function fetchCompanies() {
-        const companiesContainer =
-          document.getElementById("companiesContainer");
-        companiesContainer.innerHTML = ""; // Clear previous content
-        let nseCount = 0; // Initialize NSE count
-        let bseCount = 0;
-        // Fetch from the existing API
+  const companiesContainer = document.getElementById("companiesContainer");
+  companiesContainer.innerHTML = ""; // Clear previous content
 
-        let nseiposymbol=[]
-        let nseisign=[]
-        fetch(apiUrl)
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
+  let nseCount = 0;
+  let bseCount = 0;
 
-            // Handle Open IPOs
-            if (Array.isArray(data.open)) {
-              data.open.forEach((company) => {
-                   nseiposymbol.push(company.ipoSymbol)
-                   nseisign.push(company.isin)
-                nseCount += data.open.length;
-                addCompanyToContainer(
-                  company,
-                  companiesContainer,
-                  "MAINBOARD",
-                  "NSE"
-                );
-              });
-            } else {
-              console.error(
-                "The API response does not contain an array of open companies."
-              );
-            }
+  // First fetch NSE Data
+  fetch(apiUrl)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("NSE IPO Data:", data);
 
-            // Handle Upcoming IPOs
-            if (Array.isArray(data.upcoming)) {
-              data.upcoming.forEach((company) => {
-                nseCount += data.upcoming.length;
-                addCompanyToContainer(
-                  company,
-                  companiesContainer,
-                  "UPCOMING",
-                  "NSE"
-                );
-              });
-            } else {
-              console.error(
-                "The API response does not contain an array of upcoming companies."
-              );
-            }
-          })
-          .catch((error) => {
-            console.error("Error fetching companies:", error);
-          });
-
-       
-        // Fetch from the BSE API
-        fetch(bseApiUrl)
-          .then((response) => response.json())
-          .then((data) => {
-          
-               
-            // Handle Open IPOs from BSE API
-            if (Array.isArray(data.metaData.open)) {
-              data.metaData.open.forEach((company) => {
-                bseCount += data.metaData.open.length;
-                addCompanyToContainer(
-                  company,
-                  companiesContainer,
-                  "SME",
-                  "BSE"
-                );
-              });
-            } else {
-              console.error(
-                "The BSE API response does not contain an array of open companies."
-              );
-            }
-
-            // Handle Upcoming IPOs from BSE API
-            if (Array.isArray(data.metaData.upcoming)) {
-           
-              data.metaData.upcoming.forEach((company) => {
-                bseCount += data.upcoming.open.length;
-                addCompanyToContainer(
-                  company,
-                  companiesContainer,
-                  "SME",
-                  "BSE"
-                );
-              });
-            } else {
-              console.error(
-                "The BSE API response does not contain an array of upcoming companies."
-              );
-            }
-            updateIpoCount(nseCount, bseCount);
-          })
-          .catch((error) => {
-            console.error("Error fetching companies from BSE API:", error);
-          });
+      // 1. NSE Mainboard (Open)
+      if (Array.isArray(data.open)) {
+        data.open.forEach((company) => {
+          nseCount++;
+          addCompanyToContainer(company, companiesContainer, "MAINBOARD", "NSE");
+        });
       }
+
+      // 2. NSE Upcoming
+      if (Array.isArray(data.upcoming)) {
+        data.upcoming.forEach((company) => {
+          nseCount++;
+          addCompanyToContainer(company, companiesContainer, "UPCOMING", "NSE");
+        });
+      }
+
+      // After NSE, now fetch BSE Data
+      return fetch(bseApiUrl);
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("BSE IPO Data:", data);
+
+      // 3. BSE Mainboard (Open)
+      if (Array.isArray(data.metaData.open)) {
+        data.metaData.open.forEach((company) => {
+          bseCount++;
+          addCompanyToContainer(company, companiesContainer, "MAINBOARD", "BSE");
+        });
+      }
+
+      // 4. BSE Upcoming
+      if (Array.isArray(data.metaData.upcoming)) {
+        data.metaData.upcoming.forEach((company) => {
+          bseCount++;
+          addCompanyToContainer(company, companiesContainer, "UPCOMING", "BSE");
+        });
+      }
+
+      updateIpoCount(nseCount, bseCount); // Update count after both NSE and BSE loaded
+    })
+    .catch((error) => {
+      console.error("Error fetching companies:", error);
+    });
+}
+
 
       function addCompanyToContainer(company, container, type, source) {
         const companyDiv = document.createElement("li");
