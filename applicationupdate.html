@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Application Update</title>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .min-h-screen {
+            min-height: calc(100vh - 4rem);
+        }
+        body {
+            margin: 0;
+        }
+        .fixed-bottom-button {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 50;
+        }
+        .loader {
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .custom-bg {
+        background-color: #4269b6;
+      }
+
+      .loader::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 200%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.5);
+        animation: loading 1s linear;
+      }
+
+      @keyframes loading {
+        0% {
+          left: -100%;
+        }
+
+        100% {
+          left: 100%;
+        }
+      }
+    </style>
+</head>
+
+<body>
+    <div class="overflow-hidden min-h-screen">
+        <!-- Header Section -->
+        <div class="block max-w-4xl mx-auto bg-blue-600 sm:relative sm:h-[80px] overflow-hidden">
+            <div class="flex justify-center items-center text-center">
+                <div class="w-screen">
+                    <div class="mx-auto my-4 mb-20 rounded-md text-white font-bold">
+                        <nav class="absolute top-2 w-full">
+                            <div class="grid grid-cols-12 my-4">
+                                <div class="col-span-2 flex justify-start px-5 items-center clickable-div" data-target="newipo.html">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
+                                        <path fill-rule="evenodd" d="M11.03 3.97a.75.75 0 0 1 0 1.06l-6.22 6.22H21a.75.75 0 0 1 0 1.5H4.81l6.22 6.22a.75.75 0 1 1-1.06 1.06l-7.5-7.5a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div class="col-span-8 flex justify-start items-center text-lg font-semibold" id="ipoTitle">IPO's</div>
+                                <div class="col-span-2 flex justify-end px-5 items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="flex justify-center items-center absolute top-12 left-0 right-0 overflow-hidden">
+            <div class="rounded-md border mt-5 bg-white shadow-lg w-full max-w-4xl">
+                <!-- IPO Information -->
+                <div>
+                    <div class="flex justify-between py-3 px-3 font-bold text-xl">
+                        <div class="flex justify-between">
+                            <div>
+                                <div class="flex">
+                                    <div class="px-5" id="companyName">Loading...</div>
+                                    <span class="rounded-sm bg-indigo-50 px-1 text-[10px] font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10 flex text-center items-center my-2">MAINBOARD</span>
+                                </div>
+                                <div class="text-gray-500 text-sm px-5" id="priceRange">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 h-2"></div>
+                    <div class="px-5 py-2 flex justify-between">
+                        <div><div class="flex items-center gap-x-2 border-gray-900/5">
+                            <div class="text-gray-600">Investor Type</div>
+                        </div>
+                        <div id="investorTypeContainer" class="flex flex-col"></div> </div>
+                        <div class="text-gray-600">
+                            Maximum lots:
+                            <span id="lotSize" class="text-gray-600">Loading...</span>
+                        </div>
+                        <!-- Container for investor type buttons -->
+                    </div>
+                    <div class="flex justify-start px-5 py-2">
+                        <div class="text-gray-600">Number of lots</div>
+                   
+                    </div>
+                    <div class="px-5">
+                        <div class="grid grid-cols-12 gap-x-2">
+                            <div class="col-span-2">
+                                <div id="decrement" class="p-1 text-2xl font-bold rounded-md border border-gray-900/5 flex justify-center bg-gray-100 flex item-center text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 py-2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="col-span-8">
+                                <div class="p-2 rounded-md border border-gray-900/5 flex justify-center">
+                                    <span id="lotCount">1</span>
+                                </div>
+                            </div>
+                            <div class="col-span-2">
+                                <div id="increment" class="p-1 text-2xl font-bold rounded-md border border-gray-900/5 flex justify-center bg-gray-100 flex item-center text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8 py-2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-5 py-2  text-gray-600 lotsizeget text-sm flex justify-start" ></div>
+                    <div class="px-5">
+                        <div class="text-gray-600 py-2">Bid price</div>
+                        <input type="number" id="bidPrice" class="px-4 py-2 rounded-md border border-gray-900/5 w-full focus:outline-blue-500" />
+                    </div>
+                    <div class="py-1 my-2 bg-gray-100"></div>
+                    <div class="flex justify-between px-5 py-3 bg-gray-100 m-4 rounded-md">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="blue" class="h-6 w-6">
+                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div>Switch to HNI to buy more lots</div>
+                        <div class="font-bold text-sm text-blue-600 mt-1">MODIFY</div>
+                    </div>
+                    <div class="px-5 py-2">
+                        <label class="block text-gray-600">Enter UPI ID</label>
+                        <p class="text-gray-500 text-sm py-2">Use UPI ID linked to your bank account</p>
+                        <div class="flex items-center mt-2">
+                            <img alt="UPI logo" class="w-6 h-6" height="40" src="images/images.png" width="50" />
+                            <input class="w-full ml-2 px-4 py-2 border border-gray-300 rounded focus:outline-blue-500" type="text" placeholder="Enter your UPI (xxx@Bankname)" />
+                            <i class="fas fa-check-circle text-green-500 ml-2"> </i>
+                        </div>
+                    </div>
+                    <div class="">
+                        <label class="block text-gray-600 px-5 py-2"></label>
+                        <p class="bg-white text-sm h-[400px]"></p>
+                    </div>
+
+                    <!-- UPI Information Section -->
+                    <div class="px-5 py-2" id="upiInfoSection">
+                        <h3 class="text-gray-600 font-bold">UPI Information</h3>
+                        <ul id="upiList" class="list-disc pl-5 text-gray-600"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fixed-bottom-button bg-white max-w-4xl mx-auto">
+                <div class="flex justify-between px-4 py-2">
+                    <div class="flex">
+                        Total Payable amount
+                        <span>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3 w-3 mx-3 my-2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </span>
+                    </div>
+                    <div id="totalAmount" class="px-4 font-bold">₹ 0</div>
+                </div>
+                <button type="button"
+                class="rounded-md custom-bg
+                py-3
+                 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none mx-4 w-[90%] md:w-[95%]"
+                 id="applyButton">
+                    Update Application
+                </button>
+                <div class="py-2 flex justify-center text-gray-500 text-sm">
+                    By applying, you accept the
+                    <span class="text-blue-500 px-2">Terms and Conditions</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="responseModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-11/12 max-w-md">
+            <h2 class="text-lg font-bold mb-4" id="modalTitle">Response</h2>
+            <p id="modalMessage">Your message will appear here.</p>
+            <div class="flex justify-end mt-4">
+                <button id="closeModal" class="bg-blue-600 text-white px-4 py-2 rounded">Close</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let lotmain;
+
+            const fetchIpoInfo = async () => {
+                // Get parameters from the URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const isin = urlParams.get("isin") || "INE0R4L01018"; // Default value
+                const symbol = urlParams.get("ipoSymbol") || "DENTA"; // Default value
+                const upiId = urlParams.get("upiId") || ""; // Get UPI ID from URL
+
+                const response = await fetch(`https://ipo.gwcindia.in/nse-api/api-ipo-info.php?isin=${isin}&symbol=${symbol}`);
+                const data = await response.json();
+                if (data) {
+                    document.getElementById("companyName").textContent = data.ipoName || "N/A";
+                    document.getElementById("priceRange").textContent = `₹ ${data.minPrice} - ₹ ${data.maxPrice}`;
+                    const lotSize = parseInt(data.lotSize) || 0; // Set lotSize and ensure it's a number
+                    lotmain = parseInt(data.lotSize) || 0;
+                    document.getElementById("lotSize").textContent = lotSize || "N/A";
+                    document.getElementById("bidPrice").value = data.maxPrice || 0; // Set default bid price
+                    document.querySelector('.lotsizeget').innerHTML = `Note : 1 lot = ${parseInt(data.lotSize)} shares`;
+                    // Set the UPI ID in the input field
+                    const upiInput = document.querySelector('input[placeholder="Enter your UPI (xxx@Bankname)"]');
+                    if (upiInput) {
+                        upiInput.value = upiId; // Set the UPI ID in the input field
+                    }
+
+                    // Update total amount initially
+                    updateTotalAmount(lotSize);
+
+                    // Clear previous UPI information
+                    const upiList = document.getElementById("upiList");
+                    upiList.innerHTML = ""; // Clear previous entries
+                    const upiSettings = []; // Array to hold UPI settings
+
+                    // Create a container for investor type buttons
+                    const investorTypeContainer = document.getElementById("investorTypeContainer");
+                    investorTypeContainer.innerHTML = ""; // Clear previous buttons
+
+                    // Filter and display UPI information
+                    data.subCategorySettings.forEach((setting) => {
+                        if (setting.allowUpi) {
+                            const listItem = document.createElement("li");
+                            listItem.textContent = `${setting.caCode}: Max UPI Limit ₹${setting.maxUpiLimit}`;
+                            upiList.appendChild(listItem);
+
+                            // Store caCode and minValue in the upiSettings array
+                            upiSettings.push({
+                                caCode: setting.caCode,
+                                maxUpiLimit: setting.maxUpiLimit,
+                            });
+
+                            // Create a button for each investor type
+                            const investorTypeButton = document.createElement("button");
+                            investorTypeButton.textContent = setting.caCode; // Use caCode for button text
+                            investorTypeButton.className = "my-1 inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 cursor-pointer mr-2 focus:outline-blue-700";
+                            investorTypeButton.dataset.investorType = setting.caCode; // Store the investor type in data attribute
+                            investorTypeButton.dataset.minValue = setting.maxUpiLimit;
+
+                            // Add click event listener to the button
+                            investorTypeButton.addEventListener("click", () => {
+                                // Handle the click event for the investor type button
+                                selectedInvestorType = investorTypeButton.dataset.investorType; // Set the selected investor type
+                                selectedMinValue = parseFloat(investorTypeButton.dataset.minValue); // Get the corresponding minValue
+                                console.log(selectedMinValue, "selectedMinValue");
+                                updateMaxLots(); // Update the maximum lots based on the selected investor type
+                            });
+
+                            // Append the button to the investor type container
+                            investorTypeContainer.appendChild(investorTypeButton);
+                        }
+                    });
+
+                    // Show investor type buttons if there are investor types with allowUpi
+                    if (upiSettings.length > 0) {
+                        investorTypeContainer.style.display = "block"; // Show the container
+
+                        // Set the initial selectedMinValue to the first investor type's minValue
+                        selectedMinValue = parseFloat(upiSettings[0].maxUpiLimit);
+                        updateMaxLots(); // Update the maximum lots based on the first investor type
+                    } else {
+                        investorTypeContainer.style.display = "none"; // Hide the container
+                    }
+                }
+            };
+
+            // Call the function to fetch IPO information
+            fetchIpoInfo();
+
+            function showModal(title, message) {
+                document.getElementById("modalTitle").textContent = title;
+                document.getElementById("modalMessage").textContent = message;
+                document.getElementById("responseModal").classList.remove("hidden");
+            }
+
+            document.getElementById("closeModal").addEventListener("click", () => {
+                document.getElementById("responseModal").classList.add("hidden");
+            });
+
+            const lotCountDisplay = document.getElementById("lotCount");
+            let lotCount = 1;
+
+            const incrementButton = document.getElementById("increment");
+            const decrementButton = document.getElementById("decrement");
+
+            let selectedInvestorType = "Retail"; // Default investor type
+            let selectedMinValue = null; // To store the selected investor type's minValue
+            const upiSettings = []; // Array to hold UPI settings
+
+            function updateTotalAmount(lotSize) {
+                const bidPrice = parseFloat(document.getElementById("bidPrice").value) || 0;
+                const totalAmount = lotCount * lotmain * bidPrice;
+                document.getElementById("totalAmount").innerText = `₹ ${totalAmount.toFixed(2)}`;
+            }
+
+            incrementButton.addEventListener("click", () => {
+                const maxLotSize = parseInt(document.getElementById("lotSize").textContent);
+                if (lotCount < maxLotSize) {
+                    lotCount++;
+                    lotCountDisplay.textContent = lotCount;
+                    updateTotalAmount(parseInt(document.getElementById("lotSize").textContent));
+                }
+            });
+
+            decrementButton.addEventListener("click", () => {
+                if (lotCount > 1) {
+                    lotCount--;
+                    lotCountDisplay.textContent = lotCount;
+                    updateTotalAmount(parseInt(document.getElementById("lotSize").textContent));
+                }
+            });
+
+            // Function to update the maximum lots based on the selected investor type
+            function updateMaxLots() {
+                const lotSize = lotmain;
+                const bidPrice = parseFloat(document.getElementById("bidPrice").value) || 0;
+
+                let maxLots = 0; // Initialize maxLots
+
+                // Calculate maxLots based on selectedMinValue
+                if (lotSize > 0 && bidPrice > 0 && selectedMinValue > 0) {
+                    maxLots = Math.floor(selectedMinValue / (lotSize * bidPrice));
+                }
+
+                // Update the UI with max lots
+                document.getElementById("lotSize").textContent = maxLots > 0 ? maxLots : "N/A"; // Ensure maxLots is displayed correctly
+            }
+
+            document.getElementById("applyButton").addEventListener("click", () => {
+                const button = document.getElementById("applyButton");
+               
+
+               // Change button text
+               button.textContent = "Processing..."; // Change text to indicate processing
+               
+               // Add loader class
+               button.classList.add("loader");
+               
+               // Optionally, you can disable the button to prevent multiple clicks
+               button.disabled = true;
+               
+               // Simulate a delay for demonstration (e.g., an API call)
+               setTimeout(() => {
+                 // Reset button text and remove loader class after some time
+                 button.textContent = "Update Application";
+                 button.classList.remove("loader"); // Remove loading animation
+                 button.disabled = false; // Re-enable the button
+               }, 3000); // Change this duration as needed
+                const clientCode = "GZ10219";
+                const upiId = document.querySelector('input[placeholder="Enter your UPI (xxx@Bankname)"]').value; // Get UPI ID from input field
+                const category = "IND";
+                const qty = lotCount;
+                const price = document.getElementById("bidPrice").value || 290;
+                const cutOff = true;
+
+                const isinElement = document.getElementById("isin");
+                const ipoSymbolElement = document.getElementById("ipoSymbol");
+
+                const isin = isinElement ? isinElement.value : "INE0R4L01018"; // Default value
+                const ipoSymbol = ipoSymbolElement ? ipoSymbolElement.value : "DENTA"; // Default value
+                const val = qty * lotmain;
+
+                const formData = new FormData();
+                formData.append("clientCode", clientCode);
+                formData.append("isin", isin);
+                formData.append("ipoSymbol", ipoSymbol);
+                formData.append("upiId", upiId); // Use the dynamically set UPI ID
+                formData.append("category", category);
+                formData.append("qty", val);
+                formData.append("price", price);
+                formData.append("cutOff", cutOff);
+
+                fetch("https://ipo.gwcindia.in/nse-api/api-apply-ipo.php", {
+                    method: "POST",
+                    headers: {
+                        Cookie: "PHPSESSID=f84t4fg8ir4sa2eagd3pp1k3g7",
+                    },
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.status === "success") {
+                            showModal(data.status, data.message);
+                        } else {
+                            showModal("Error", data.message || "An error occurred.");
+                        }
+                        console.log(data);
+                    })
+                    .catch((error) => {
+                        showModal("Error", "Error submitting application!");
+                        console.error(error);
+                    });
+            });
+
+            document.querySelector(".clickable-div").addEventListener("click", function () {
+                const target = this.getAttribute("data-target");
+                window.location.href = target; // Navigate to the new page
+            });
+        });
+    </script>
+</body>
+</html>

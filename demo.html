@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Enable Button on Input (Tailwind)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+
+  <div class="bg-white p-8 rounded shadow-md w-80 space-y-4">
+    <input type="text" id="input1" placeholder="Input 1" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <input type="text" id="input2" placeholder="Input 2" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <input type="text" id="input3" placeholder="Input 3" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+    
+    <button id="submitButton" disabled class="w-full p-2 rounded bg-gray-400 text-white cursor-not-allowed">
+      Submit
+    </button>
+  </div>
+
+  <script>
+    const input1 = document.getElementById('input1');
+    const input2 = document.getElementById('input2');
+    const input3 = document.getElementById('input3');
+    const button = document.getElementById('submitButton');
+
+    function checkInputs() {
+      if (input1.value.trim() && input2.value.trim() && input3.value.trim()) {
+        button.disabled = false;
+        button.classList.remove('bg-gray-400', 'cursor-not-allowed');
+        button.classList.add('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
+      } else {
+        button.disabled = true;
+        button.classList.add('bg-gray-400', 'cursor-not-allowed');
+        button.classList.remove('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
+      }
+    }
+
+    input1.addEventListener('input', checkInputs);
+    input2.addEventListener('input', checkInputs);
+    input3.addEventListener('input', checkInputs);
+  </script>
+
+</body>
+</html>

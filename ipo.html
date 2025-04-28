@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPO</title>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+</head>
+
+<body>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const secret = "ipotimestampkey";
+            const url = new URL(window.location.href);
+            const cc = url.searchParams.get('clientcode');
+       
+
+            if (!cc) {
+                if (!cc) url.searchParams.set('clientcode', '000');
+                window.location.href = url.toString();
+          
+
+            } else {
+              
+                clientcode(cc)
+            }
+        });
+
+        async function clientcode(clientcode) {
+            const timestamp = new Date().toISOString();
+            const secretKey = 'CLIENTTIMESTAMP';
+            const encryptedTimestamp = CryptoJS.AES.encrypt(timestamp, secretKey).toString();
+            console.log(encryptedTimestamp)
+            const url = `https://ipo.gwcindia.in/nse-api/api-client-info.php?clientCode=${clientcode}`
+           try {
+            const response = await fetch(url, {
+                method:'GET',
+             
+            })
+            if(!response.ok){
+                throw new Error('Network is error', response.status);
+            }
+            else{
+                const data=await response.json()
+                if(data.clientId==clientcode){
+                    localStorage.setItem('clientcode',clientcode)
+                    window.location.href='newipo.html'
+                }
+            }
+           } catch (error) {
+            console.log(error.message)
+           }
+            
+        }
+    </script>
+
+
+
+
+</body>
+
+</html>
