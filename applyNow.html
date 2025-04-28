@@ -125,7 +125,7 @@
                 class="rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">Loading...</span>
             </div>
           </div>
-          <div class="px-5" style="border: 1px solid red;">
+          <div class="px-5" >
             <div class="grid grid-cols-12 gap-x-2">
               <div class="col-span-2">
                 <div id="decrement"
@@ -266,7 +266,13 @@
 
   <script>
 
-
+const clickableDivs = document.querySelectorAll(".clickable-div");
+      clickableDivs.forEach((div) => {
+        div.addEventListener("click", function () {
+          const targetPage = this.getAttribute("data-target");
+          window.location.href = targetPage;
+        });
+      });
 
     document.addEventListener("DOMContentLoaded", () => {
 
