@@ -373,7 +373,7 @@
 
     <script>
       const apiUrl = "https://ipo.gwcindia.in/nse-api/api-ipo-master.php";
-      const clientcodeapp=localStorage.getItem('clientcode')
+      const clientcodeapp='GZ10219'
       const applicationApiUrl =
         `https://ipo.gwcindia.in/nse-api/api-client-applications.php?clientCode=${clientcodeapp}`;
       const companyList = [];
@@ -519,7 +519,7 @@
     const countSpan = document.getElementById('countSpan'); // Select the span by ID
     countSpan.textContent = totalCount; // Update the span with the total count
 }
-    const clientcode=localStorage.getItem('clientcode')
+    const clientcode='GZ10219'
       const clientInfoUrl =
         `https://ipo.gwcindia.in/nse-api/api-client-info.php?clientCode=${clientcode}`;
       function fetchClientInfo() {

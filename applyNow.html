@@ -612,23 +612,7 @@
     });
 
 
-    function nseapply(){
-  
-      // const apiurl='https://ipo.gwcindia.in/v3/api-modify-ipo.php'
-      // const formData=new FormData()
-      // formData.append('clientCode', localStorage.getItem('clientcode'))
-      // formData.append('isin', urlParams.get("isin"))
-      // formData.append('ipoSymbol')
-      // formData.append('upiId', upid.value)
-      // formData.append('category')
-      // formData.append('qty')
-      // formData.append('price', price.value)
-      // formData.append('cutOff')
-    }
-
-    });
-
-  document.getElementById('applyButton').addEventListener('click', async function() {
+    document.getElementById('applyButton').addEventListener('click', async function() {
   const urlParams = new URLSearchParams(window.location.search);
 
   const checkedRadio = document.querySelector(`input[name="group1"]:checked`);
@@ -650,7 +634,7 @@
 
   let cutoff = (checkedRadio2.value === 'bid') ? 'true' : 'false';
 
-  const apiurl = 'https://ipo.gwcindia.in/nse-api/api-modify-ipo.php';
+  const apiurl = 'https://ipo.gwcindia.in/nse-api/api-apply-ipo.php';
   const formData = new FormData();
   formData.append('clientCode', localStorage.getItem('clientcode'));
   formData.append('isin', urlParams.get('isin'));
@@ -678,6 +662,10 @@
   }
 });
 
+
+    });
+
+ 
   </script>
 </body>
 
