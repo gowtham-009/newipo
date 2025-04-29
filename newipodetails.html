@@ -552,7 +552,7 @@ const datarendering=(ipodetails)=>{
   document.getElementById('companysymbol').innerText=ipodetails.nse.ipoSymbol
   document.getElementById('mode').innerHTML=parametersObject.isCompanyFrom
   document.getElementById('status').innerHTML=ipodetails.nse.subType
-  document.getElementById('bidPrice').innerHTML="₹"+" "+ipodetails.nse.maxPrice
+  document.getElementById('bidPrice').innerHTML="₹"+" "+ipodetails.nse.minPrice+" "+"-"+"₹"+ipodetails.nse.maxPrice
   document.getElementById('lotSize').innerHTML=ipodetails.nse.lotSize+" "+"Shares"
   document.getElementById('offerType').innerHTML=ipodetails.nse.subType ||'N/A'
   document.getElementById('ipoType').innerHTML=ipodetails.nse.issueType
