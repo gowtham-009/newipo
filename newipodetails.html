@@ -680,7 +680,7 @@ const investmentfunction = (cacode, responsedata) => {
     const bidmaxprice=Number(responsedata.nse.maxPrice)
     const lotsize=Number(responsedata.nse.lotSize)
     const minimuminvestment=bidprice*lotsize
-    document.getElementById('minimumInvestment').innerText="1 Lot /"+" "+"₹"+minimuminvestment
+    document.getElementById('minimumInvestment').innerText="1 Lot /"+" "+"₹"+" "+minimuminvestment
     const maxi=bidmaxprice*lotsize
  
      const maximuminvestment=Math.floor(maxPrice/maxi)
@@ -691,25 +691,28 @@ const investmentfunction = (cacode, responsedata) => {
 
      document.getElementById('retailDiscount').innerText= "₹"+" "+discountPrice
     
-     document.getElementById('maximumInvestment').innerText=maximuminvestment+" "+"Lot / "+"₹"+totalmaximumamount
+     document.getElementById('maximumInvestment').innerText=maximuminvestment+" "+"Lot / "+"₹"+" "+totalmaximumamount
      const parametersObject = getDecryptedData();
-    console.log(parametersObject)
+   
      const applydata={
       investortype:cacode,
       ipoSymbol:parametersObject.ipoSymbol,
       isCompanyFrom:parametersObject.isCompanyFrom,
       isin:parametersObject.isin
      }
-
-     return applydata
+   
+   return applydata
      
  
 };
 
+document
+        .getElementById("applyNowButton")
+        .addEventListener("click", function () {
+        
+          window.location.href = `applyNow.html`;
+        });
 
-document.getElementById('applyNowButton').addEventListener('click', function(){
-
-})
 
   </script>
 </body>
