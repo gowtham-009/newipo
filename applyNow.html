@@ -155,30 +155,15 @@
           <div class="w-full flex justify-between" >
             <div class="px-5 py-2 text-gray-600 lotsizeget text-sm flex justify-start"></div>
 
-            <div class="sumlots p-1 flex gap-1 px-6">
+            <!-- <div class="sumlots p-1 flex gap-1 px-6">
               <p class="text-gray-500" id="lotssum"></p><p class="text-gray-500">Shares</p>
-            </div>
+            </div> -->
           </div>
           <div class="w-full p-1" id="limitationcontent">
 
           </div>
           <div class="px-5">
-            <fieldset class="mb-2">
-              <div class="mt-6 flex gap-2">
-                <div class="flex items-center justify-center py-2 border-2 rounded-lg shadow w-full">
-                  <input id="manualprice" name="group0" type="radio" value="manual"
-                    class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden">
-                  <label for="manualprice" class="ml-3 block text-sm/6 font-medium text-gray-900">Manual Price</label>
-                </div>
-                <div class="flex items-center justify-center py-2 border-2 rounded-lg shadow w-full">
-                  <input id="bidprice" name="group0" type="radio" checked value="bid"
-                    class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden [&:not(:checked)]:before:hidden">
-                  <label for="bidprice" class="ml-3 block text-sm/6 font-medium text-gray-900">Bid Price</label>
-
-                </div>
-
-              </div>
-            </fieldset>
+           
             <input readonly type="number" id="price"
               class="px-4  py-2 rounded-md border border-gray-900/5 w-full focus:outline-blue-500" />
 
@@ -267,6 +252,9 @@
   <input type="text" class="hidden" id="minvalbse">
   <input type="text" class="hidden"  id="maxvalbse">
 
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
   <script>
 
 const clickableDivs = document.querySelectorAll(".clickable-div");
@@ -277,23 +265,35 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
         });
       });
 
-    document.addEventListener("DOMContentLoaded", () => {
+
+
+      function getDecryptedData() {
+      var urlParams = new URLSearchParams(window.location.search);
+      var encryptedData = urlParams.get('data');
+      if (encryptedData) {
+        var secretKey = "ipodetailsdata01"; 
+        var decodedData = decodeURIComponent(encryptedData);
+        var bytes = CryptoJS.AES.decrypt(decodedData, secretKey);
+        var decryptedJson = bytes.toString(CryptoJS.enc.Utf8);
+        var iporequiredDetails = JSON.parse(decryptedJson);
+       return iporequiredDetails
+
+
+      }
+    }
+
+    window.onload = function () {
+      getDecryptedData();
+    
+    };
+
+
+  
 
     let no_of_share_amount;
 
       let lotmain;
-      function getQueryParams() {
-        const params = new URLSearchParams(window.location.search);
-        return {
-
-          isin: params.get("isin"),
-          ipoSymbol: params.get("ipoSymbol"),
-          source: params.get("source"),
-          bidMin: params.get('bidmin'),
-          bidMax: params.get('bidmax')
-
-        };
-      }
+  
 
 
 
@@ -343,29 +343,7 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
             const manualRadio = document.getElementById('manualprice');
             const bidRadio = document.getElementById('bidprice');
 
-            function togglePriceInputbse() {
-              if (manualRadio.checked) {
-                priceInput.value = minPrice;
-                priceInput.readOnly = false;
-                
-              } else if (bidRadio.checked) {
-                // If bid price is selected, set maxPrice and make the input readonly
-                priceInput.value = maxPrice;
-                priceInput.readOnly = true;
-                
-              }
-
-              updateTotalAmount(lotSize);
-             checkInputs();
-            }
-
-
-            togglePriceInputbse();
-
-
-            manualRadio.addEventListener('change', togglePriceInputbse);
-            bidRadio.addEventListener('change', togglePriceInputbse);
-
+          
          
                 // Set the UPI ID in the input field
                 const upiInput = document.getElementById("upiIdInput");
@@ -429,140 +407,15 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
             const manualRadio = document.getElementById('manualprice');
             const bidRadio = document.getElementById('bidprice');
 
-            function togglePriceInput() {
-              if (manualRadio.checked) {
-                priceInput.value = minPrice;
-                priceInput.readOnly = false;
-                
-              } else if (bidRadio.checked) {
-                // If bid price is selected, set maxPrice and make the input readonly
-                priceInput.value = maxPrice;
-                priceInput.readOnly = true;
-                
-              }
-
-              updateTotalAmount(lotSize);
-              checkInputs();
-            }
-
-
-            togglePriceInput();
-
-
-            manualRadio.addEventListener('change', togglePriceInput);
-            bidRadio.addEventListener('change', togglePriceInput);
-
-
+         
                   }
         } catch (error) {
           console.error("Error fetching IPO info:", error);
         }
       };
 
-      function limitationfield(fildsvalue, radioGroupName) {
-      
-        const limitcontent = document.getElementById('limitationcontent');
-        limitcontent.innerHTML = ''; // Clear previous content
+    
 
-        const subCategorySettings = fildsvalue.nse.subCategorySettings;
-
-        const gridContainer = document.createElement('div');
-        gridContainer.className = 'grid grid-cols-2 gap-4 p-4';
-
-        subCategorySettings.forEach((subcate, index) => {
-          if (subcate.allowUpi) {
-            const card = document.createElement('div');
-            card.className = 'border rounded-lg p-4 bg-white shadow hover:shadow-lg transition';
-
-            const radioId = `radio_${index}_${subcate.subCatCode}`; // Unique ID with index!
-
-            card.innerHTML = `
-        <div class="flex items-center">
-          <input 
-            id="${radioId}"
-            value="${subcate.subCatCode}"
-            name="${radioGroupName}"
-            type="radio"
-            class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white 
-            before:absolute before:inset-1 before:rounded-full before:bg-white 
-            checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline 
-            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 
-            disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 
-            forced-colors:appearance-auto forced-colors:before:hidden 
-            [&:not(:checked)]:before:hidden"
-            data-min="${subcate.minValue}"
-            data-max="${subcate.maxUpiLimit}"
-          >
-          <label for="${radioId}" class="ml-3 block text-sm/6 font-medium text-gray-900">${subcate.subCatCode}</label>
-        </div>
-
-        <div class="w-full px-6">
-          <span>Min value: ${subcate.minValue}</span><br>
-          <span>Max value: ${subcate.maxUpiLimit}</span>
-        </div>
-      `;
-
-            gridContainer.appendChild(card);
-          }
-        });
-
-        limitcontent.appendChild(gridContainer);
-
-
-      }
-
-
-      function limitationfieldbse(fildsvalue, radioGroupName) {
-        console.log("lkjbv",fildsvalue)
-       const limitcontent = document.getElementById('limitationcontent');
-       limitcontent.innerHTML = ''; // Clear previous content
-
-       const CategorySettings = fildsvalue.category
-
-       const gridContainer = document.createElement('div');
-      gridContainer.className = 'grid grid-cols-2 gap-4 p-4';
-
-      CategorySettings.forEach((categories, index) => {
-         if (categories.asbanonasba=='1') {
-          const card = document.createElement('div');
-          card.className = 'border rounded-lg p-4 bg-white shadow hover:shadow-lg transition';
-
-          const radioId = `radio_${index}_${categories.asbanonasba}`; // Unique ID with index!
-
-          card.innerHTML = `
-      <div class="flex items-center">
-        <input 
-          id="${radioId}"
-          value="${categories.category}"
-          name="${radioGroupName}"
-          type="radio"
-          class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white 
-          before:absolute before:inset-1 before:rounded-full before:bg-white 
-          checked:border-indigo-600 checked:bg-indigo-600 focus-visible:outline 
-          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 
-          disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 
-          forced-colors:appearance-auto forced-colors:before:hidden 
-          [&:not(:checked)]:before:hidden"
-          data-min="${categories.minbidvalue}"
-          data-max="${categories.maxbidvalue}"
-        >
-        <label for="${radioId}" class="ml-3 block text-sm/6 font-medium text-gray-900">${categories.category}</label>
-      </div>
-
-      <div class="w-full px-6">
-        <span>Min value: ${categories.minbidvalue}</span><br>
-        <span>Max value: ${categories.maxbidvalue}</span>
-      </div>
-    `;
-
-          gridContainer.appendChild(card);
-        }
-      });
-
-      limitcontent.appendChild(gridContainer);
-
-
-    }
 
       function showModal(title, message) {
         document.getElementById("modalTitle").textContent = title;
@@ -730,7 +583,7 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
   const urlParams = new URLSearchParams(window.location.search);
 
   const checkedRadio = document.querySelector('input[name="group1"]:checked');
-  console.log("ifvaheiu",checkedRadio.value)
+
   const checkedRadio2 = document.querySelector('input[name="group0"]:checked');
   const upiId = document.getElementById('upiIdInput').value.trim();
   const qty = document.getElementById('lotssum').innerText.trim();
@@ -803,7 +656,7 @@ const clickableDivs = document.querySelectorAll(".clickable-div");
   }
 });
 
-    });
+
 
  
   </script>
