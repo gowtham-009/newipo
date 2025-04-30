@@ -708,79 +708,61 @@ document.getElementById('biddingMessage').innerText = `Expired ${Math.abs(diffDa
 
 
 
-// if (ipodetails.metaData[parametersObject.isin].category) {
-// const subCategorySettings = ipodetails.metaData[parametersObject.isin].category;
-// let investortype = [];
+if (ipodetails.metaData[parametersObject.isin].category) {
+const subCategorySettings = ipodetails.metaData[parametersObject.isin].category;
+let investortype = [];
 
-// subCategorySettings.forEach((category) => {
-// if (category.asbanonasba=='1') {
-//   let code = category.category;
-//   if(code==='RETAIL'){
-//     code="Retail"
-//   }
-//   else if (code === 'NIB') {
-//     code = 'HNI';
+subCategorySettings.forEach((category) => {
+if (category.asbanonasba=='1') {
+  console.log(category.category)
+  
+  const hiddenContent = document.getElementById('hiddencontent');
 
-//   } else if (code === 'EMPRET') {
-//     code = 'EMP';
-
-//   }
-
-//   if (code === 'Retail') {
-//     investortype.unshift(code);
-
-//   } else {
-//     investortype.push(code);
-//   }
-
-//   const hiddenContent = document.getElementById('hiddencontent');
-
-//   hiddenContent.innerHTML += `
-//   <input type="text" class="hidden" id="${code}-discountprice" value="${category.discountPrice || '0'}">
-//   <input type="text"  class="hidden" id="${code}-minprice" value="${category.minValue}">
-//   <input type="text"  class="hidden" id="${code}-maxprice" value="${category.maxUpiLimit}">
-// `;
+  hiddenContent.innerHTML += `
+  <input type="text" class="hidden" id="${code}-discountprice" value="${category.discountPrice || '0'}">
+  <input type="text"  class="hidden" id="${code}-minprice" value="${category.minValue}">
+  <input type="text"  class="hidden" id="${code}-maxprice" value="${category.maxUpiLimit}">
+`;
 
   
-// }
-// });
+}
+});
 
 
+const container = document.getElementById('investorTypesContainer');
+container.innerHTML = '';
+let activeButton = null; 
+investortype.forEach((type, index) => {
+  const button = document.createElement('button');
+  button.innerText = type;
+  button.className = 'rounded-md outline-none bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm';
 
-// const container = document.getElementById('investorTypesContainer');
-// container.innerHTML = '';
-// let activeButton = null; 
-// investortype.forEach((type, index) => {
-//   const button = document.createElement('button');
-//   button.innerText = type;
-//   button.className = 'rounded-md outline-none bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm';
-
-//   button.addEventListener('click', () => {
-//     if (activeButton) {
-//       activeButton.classList.remove('bg-green-500');
-//       activeButton.classList.add('bg-white');
-//     }
-//     button.classList.remove('bg-white');
-//     button.classList.add('bg-green-500');
-//     activeButton = button;
+  button.addEventListener('click', () => {
+    if (activeButton) {
+      activeButton.classList.remove('bg-green-500');
+      activeButton.classList.add('bg-white');
+    }
+    button.classList.remove('bg-white');
+    button.classList.add('bg-green-500');
+    activeButton = button;
    
-//     document.getElementById('catetype').innerHTML=type
+    document.getElementById('catetype').innerHTML=type
 
-//     investmentfunction(type, ipodetails)
-
-
-//   });
-//   container.appendChild(button);
-//   if (index === 0) {
-
-//     button.click(); 
-//   }
-// });
+    investmentfunction(type, ipodetails)
 
 
+  });
+  container.appendChild(button);
+  if (index === 0) {
+
+    button.click(); 
+  }
+});
 
 
-// }
+
+
+}
  }
 }
 
