@@ -389,20 +389,24 @@
             <div class="flex justify-between gap-x-4 py-3">
                 <div>
                     <dt class="text-gray-500">Opens on</dt>
-                    <dd class="text-gray-700 font-bold" ><time  datetime="${company.biddingStartDate ? company.biddingStartDate : company.opendate
-        }">${new Date(company.biddingStartDate ? company.biddingStartDate : company.opendate).toLocaleDateString(
-          "en-GB",
-          { day: "2-digit", month: "short", year: "numeric" }
-        )}</time>  </dd>
+                    <dd class="text-gray-700 font-bold" >
+                      <time datetime="${company.biddingStartDate || company.opendate}">
+  ${new Date(company.biddingStartDate || company.opendate).toLocaleDateString(
+    "en-GB",
+    { day: "2-digit", month: "short", year: "numeric" }
+  )}
+</time> </dd>
                 </div>
                 <div class="">
                     <dt class="text-gray-500 flex justify-end">Minimum Investment</dt>
                     <dd class="text-gray-700 font-bold flex items-center justify-end" id="maxInvestment">
-                        <time datetime="${company.biddingEndDate ? company.biddingEndDate : company.closedate
-        }">${calculateMaxInvestment(
+              
+
+
+        ${calculateMaxInvestment(
           company.minPrice ? company.minPrice : company.floorprice,
           company.lotSize ? company.lotSize : company.tradinglot
-        )}</time>
+        )}
                         
                     </dd>
                 </div>
@@ -412,11 +416,13 @@
                <div class="w-full">
                 <dt class="text-gray-500">Close</dt>
                 <dd class="text-gray-700 font-bold" >
-                  <time  datetime="${company.biddingEndDate ? company.biddingEndDate : company.opendate
-                    }">${new Date(company.biddingEndDate ? company.biddingEndDate : company.opendate).toLocaleDateString(
-                      "en-GB",
-                      { day: "2-digit", month: "short", year: "numeric" }
-                    )}</time>
+                 
+         <time datetime="${company.biddingEndDate || company.closedate}">
+  ${new Date(company.biddingEndDate || company.closedate).toLocaleDateString(
+    "en-GB",
+    { day: "2-digit", month: "short", year: "numeric" }
+  )}
+</time>
                   </dd>
                 </div>
 

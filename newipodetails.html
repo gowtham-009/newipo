@@ -551,7 +551,7 @@ const datarendering=(ipodetails)=>{
   document.getElementById('companyName').innerText=ipodetails.nse.ipoName
   document.getElementById('companysymbol').innerText=ipodetails.nse.ipoSymbol
   document.getElementById('mode').innerHTML=parametersObject.isCompanyFrom
-  document.getElementById('status').innerHTML=ipodetails.nse.subType
+  document.getElementById('status').innerHTML=ipodetails.nse.subType ||'N/A'
   document.getElementById('bidPrice').innerHTML="₹"+" "+ipodetails.nse.minPrice+" "+"-"+" "+"₹"+ipodetails.nse.maxPrice
   document.getElementById('lotSize').innerHTML=ipodetails.nse.lotSize+" "+"Shares"
   document.getElementById('offerType').innerHTML=ipodetails.nse.subType ||'N/A'
@@ -615,9 +615,9 @@ if (diffDays === 0) {
     const hiddenContent = document.getElementById('hiddencontent');
  
     hiddenContent.innerHTML += `
-    <input type="text" class="hidden" id="${code}-discountprice" value="${category.discountPrice || '0'}">
-    <input type="text"  class="hidden" id="${code}-minprice" value="${category.minValue}">
-    <input type="text"  class="hidden" id="${code}-maxprice" value="${category.maxUpiLimit}">
+    <input type="text"  id="${code}-discountprice" value="${category.discountPrice || '0'}">
+    <input type="text"   id="${code}-minprice" value="${category.minValue}">
+    <input type="text"   id="${code}-maxprice" value="${category.maxUpiLimit}">
   `;
 
     
@@ -706,7 +706,7 @@ document.getElementById('biddingMessage').innerText = `Expired ${Math.abs(diffDa
 
 
 
-// if (ipodetails.metaData[parametersObject.isin].subCategorySettings) {
+// if (ipodetails.metaData[parametersObject.isin].category) {
 // const subCategorySettings = ipodetails.metaData[parametersObject.isin].category;
 // let investortype = [];
 
@@ -782,39 +782,61 @@ document.getElementById('biddingMessage').innerText = `Expired ${Math.abs(diffDa
  }
 }
 
-let investorType
+let investorType;
+
 const investmentfunction = (cacode, responsedata) => {
-  investorType=cacode
+  investorType = cacode;
+
   const discountInput = document.getElementById(`${cacode}-discountprice`);
   const minInput = document.getElementById(`${cacode}-minprice`);
   const maxInput = document.getElementById(`${cacode}-maxprice`);
 
-    const discountPrice = discountInput.value;
-    const minPrice = minInput.value;
-    const maxPrice = maxInput.value;
-    const bidprice=Number(responsedata.nse.minPrice)
-    const bidmaxprice=Number(responsedata.nse.maxPrice)
-    const lotsize=Number(responsedata.nse.lotSize)
-    const minimuminvestment=bidprice*lotsize
-    document.getElementById('minimumInvestment').innerText="1 Lot /"+" "+"₹"+" "+minimuminvestment
-    const maxi=bidmaxprice*lotsize
- 
-     const maximuminvestment=Math.floor(maxPrice/maxi)
+  const discountPrice = Number(discountInput.value);
+  const minPrice = Number(minInput.value);
+  const maxPrice = Number(maxInput.value);
 
-     const totalmaximumamount=maximuminvestment*maxi
+  const bidPrice = Number(responsedata.nse.minPrice);
+  const bidMaxPrice = Number(responsedata.nse.maxPrice);
+  const lotSize = Number(responsedata.nse.lotSize);
 
+  const minInvestmentPerLot = bidPrice * lotSize;
+  const maxInvestmentPerLot = bidMaxPrice * lotSize;
+  console.log(minPrice, maxPrice)
+  document.getElementById('retailDiscount').innerText = "₹ " + discountPrice.toLocaleString();
 
+  const maxLots = Math.floor(maxPrice / maxInvestmentPerLot);
+  const totalMaxInvestment = maxLots * maxInvestmentPerLot;
 
-     document.getElementById('retailDiscount').innerText= "₹"+" "+discountPrice
-    
-     document.getElementById('maximumInvestment').innerText = 
-     maximuminvestment + " " + (maximuminvestment <= 1 ? "Lot" : "Lots") + " / ₹ " + totalmaximumamount;
-   
-   
+  if (minPrice <= 0) {
+    document.getElementById('minimumInvestment').innerText = `1 Lot / ₹ ${minInvestmentPerLot.toLocaleString()}`;
+    document.getElementById('maximumInvestment').innerText =
+      `${maxLots} ${maxLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMaxInvestment.toLocaleString()}`;
+  } else {
+    let minLots = Math.floor(minPrice / minInvestmentPerLot);
+    let totalMinInvestment = minLots * minInvestmentPerLot;
 
-     
- 
+    // Keep incrementing until we reach or exceed minPrice
+    while (totalMinInvestment < minPrice) {
+      minLots++;
+      totalMinInvestment = minLots * minInvestmentPerLot;
+    }
+
+    // If min exceeds max, show warning
+    if (totalMinInvestment > totalMaxInvestment) {
+      document.getElementById('minimumInvestment').innerText = "Invalid range: min > max";
+      document.getElementById('maximumInvestment').innerText = "Please adjust values";
+      return;
+    }
+
+    document.getElementById('minimumInvestment').innerText =
+      `${minLots} ${minLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMinInvestment.toLocaleString()}`;
+
+    document.getElementById('maximumInvestment').innerText =
+      `${maxLots} ${maxLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMaxInvestment.toLocaleString()}`;
+  }
 };
+
+
 
 function redirect(){
   const parametersObject = getDecryptedData();
