@@ -615,9 +615,9 @@ if (diffDays === 0) {
     const hiddenContent = document.getElementById('hiddencontent');
  
     hiddenContent.innerHTML += `
-    <input type="text"  id="${code}-discountprice" value="${category.discountPrice || '0'}">
-    <input type="text"   id="${code}-minprice" value="${category.minValue}">
-    <input type="text"   id="${code}-maxprice" value="${category.maxUpiLimit}">
+    <input type="text" class="hidden"  id="${code}-discountprice" value="${category.discountPrice || '0'}">
+    <input type="text" class="hidden"  id="${code}-minprice" value="${category.minValue}">
+    <input type="text" class="hidden"   id="${code}-maxprice" value="${category.maxUpiLimit}">
   `;
 
     
