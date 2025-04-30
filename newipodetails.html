@@ -548,6 +548,8 @@ const datarendering=(ipodetails)=>{
  if(ipodetails.nse){
   const parametersObject = getDecryptedData();
 
+  console.log("lerj",parametersObject)
+
   document.getElementById('companyName').innerText=ipodetails.nse.ipoName
   document.getElementById('companysymbol').innerText=ipodetails.nse.ipoSymbol
   document.getElementById('mode').innerHTML=parametersObject.isCompanyFrom
@@ -783,7 +785,8 @@ document.getElementById('biddingMessage').innerText = `Expired ${Math.abs(diffDa
 }
 
 let investorType;
-
+let discountpricevalue;
+let lotsvalue;
 const investmentfunction = (cacode, responsedata) => {
   investorType = cacode;
 
@@ -794,7 +797,7 @@ const investmentfunction = (cacode, responsedata) => {
   const discountPrice = Number(discountInput.value);
   const minPrice = Number(minInput.value);
   const maxPrice = Number(maxInput.value);
-
+  discountpricevalue=discountPrice
   const bidPrice = Number(responsedata.nse.minPrice);
   const bidMaxPrice = Number(responsedata.nse.maxPrice);
   const lotSize = Number(responsedata.nse.lotSize);
@@ -811,6 +814,7 @@ const investmentfunction = (cacode, responsedata) => {
     document.getElementById('minimumInvestment').innerText = `1 Lot / ₹ ${minInvestmentPerLot.toLocaleString()}`;
     document.getElementById('maximumInvestment').innerText =
       `${maxLots} ${maxLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMaxInvestment.toLocaleString()}`;
+      lotsvalue=maxLots
   } else {
     let minLots = Math.floor(minPrice / minInvestmentPerLot);
     let totalMinInvestment = minLots * minInvestmentPerLot;
@@ -833,6 +837,8 @@ const investmentfunction = (cacode, responsedata) => {
 
     document.getElementById('maximumInvestment').innerText =
       `${maxLots} ${maxLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMaxInvestment.toLocaleString()}`;
+      lotsvalue
+      lotsvalue=maxLots
   }
 };
 
@@ -842,6 +848,7 @@ function redirect(){
   const parametersObject = getDecryptedData();
    
    const applydata={
+  
     investortype:investorType,
     ipoSymbol:parametersObject.ipoSymbol,
     isCompanyFrom:parametersObject.isCompanyFrom,

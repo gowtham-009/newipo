@@ -1,67 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPO</title>
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Over Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Custom transition for the slide-over and backdrop */
+    .slide-over-enter {
+      transition: transform 0.5s ease-in-out;
+    }
+    .slide-over-leave {
+      transition: transform 0.5s ease-in-out;
+    }
+    .backdrop-enter {
+      transition: opacity 0.5s ease-in-out;
+    }
+    .backdrop-leave {
+      transition: opacity 0.5s ease-in-out;
+    }
+  </style>
 </head>
+<body class="bg-gray-100">
+  <!-- Button to Open the Slide-Over Panel -->
+  <button id="open-drawer-btn" class="p-2 bg-blue-500 text-white rounded-md mt-10 ml-10">
+    Open Panel
+  </button>
 
-<body>
+  <!-- Slide-over Panel (Drawer) -->
+  <div id="slide-over" class="relative z-10 hidden" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
+    <!-- Background backdrop -->
+    <div class="fixed inset-0 bg-gray-500/75 opacity-0 transition-opacity" id="backdrop" aria-hidden="true"></div>
 
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const secret = "ipotimestampkey";
-            const url = new URL(window.location.href);
-            const cc = url.searchParams.get('clientcode');
-       
+    <div class="fixed inset-0 overflow-hidden">
+      <div class="absolute inset-0 overflow-hidden">
+        <div class="pointer-events-none fixed inset-x-0 bottom-0 flex max-h-full">
+          <!-- Slide-over panel (bottom to top) -->
+          <div class="pointer-events-auto relative w-full max-h-[50vh] transform translate-y-full transition-transform duration-500 ease-in-out" id="panel">
+            <!-- Close button -->
+            <div class="absolute right-0 top-0 pr-4 pt-4">
+              <button id="close-drawer-btn" type="button" class="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
+                <span class="absolute -inset-2.5"></span>
+                <span class="sr-only">Close panel</span>
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
-            if (!cc) {
-                if (!cc) url.searchParams.set('clientcode', '000');
-                window.location.href = url.toString();
-          
+            <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+              <div class="px-4 sm:px-6">
+                <h2 class="text-base font-semibold text-gray-900" id="slide-over-title">Panel title</h2>
+              </div>
+              <div class="relative mt-6 flex-1 px-4 sm:px-6">
+                <!-- Your content here -->
+                <p>Your content goes here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            } else {
-              
-                clientcode(cc)
-            }
-        });
+  <script>
+    // Open the Slide-over panel when the button is clicked
+    document.getElementById('open-drawer-btn').addEventListener('click', function() {
+      const slideOver = document.getElementById('slide-over');
+      const backdrop = document.getElementById('backdrop');
+      const panel = document.getElementById('panel');
+      
+      // Show the slide-over by removing the hidden class and applying transitions
+      slideOver.classList.remove('hidden');
+      
+      // Trigger backdrop fade-in
+      setTimeout(() => {
+        backdrop.classList.remove('opacity-0');
+        backdrop.classList.add('opacity-100');
+      }, 10);
 
-        async function clientcode(clientcode) {
-            const timestamp = new Date().toISOString();
-            const secretKey = 'CLIENTTIMESTAMP';
-            const encryptedTimestamp = CryptoJS.AES.encrypt(timestamp, secretKey).toString();
-            console.log(encryptedTimestamp)
-            const url = `https://ipo.gwcindia.in/nse-api/api-client-info.php?clientCode=${clientcode}`
-           try {
-            const response = await fetch(url, {
-                method:'GET',
-             
-            })
-            if(!response.ok){
-                throw new Error('Network is error', response.status);
-            }
-            else{
-                const data=await response.json()
-                if(data.clientId==clientcode){
-                    localStorage.setItem('clientcode',clientcode)
-                    window.location.href='index.html'
-                }
-            }
-           } catch (error) {
-            console.log(error.message)
-           }
-            
-        }
-    </script>
+      // Trigger panel slide-in (bottom to top)
+      setTimeout(() => {
+        panel.classList.remove('translate-y-full');
+        panel.classList.add('translate-y-0');
+      }, 10);
+    });
 
+    // Close the Slide-over panel when the close button is clicked
+    document.getElementById('close-drawer-btn').addEventListener('click', function() {
+      const slideOver = document.getElementById('slide-over');
+      const backdrop = document.getElementById('backdrop');
+      const panel = document.getElementById('panel');
+      
+      // Trigger panel slide-out (bottom to top)
+      panel.classList.remove('translate-y-0');
+      panel.classList.add('translate-y-full');
 
+      // Trigger backdrop fade-out
+      setTimeout(() => {
+        backdrop.classList.remove('opacity-100');
+        backdrop.classList.add('opacity-0');
+      }, 200); // Matches panel animation time (slightly after panel closes)
 
-
+      // Hide the slide-over panel after animations
+      setTimeout(() => {
+        slideOver.classList.add('hidden');
+      }, 500); // Wait until animations are complete
+    });
+  </script>
 </body>
-
 </html>
