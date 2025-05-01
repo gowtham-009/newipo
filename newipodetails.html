@@ -269,7 +269,7 @@
                     </div>
                     <div>
                       <dt class="text-gray-500 flex justify-end">IPO Type</dt>
-                      <dd class="text-gray-700 font-bold" id="ipoType">
+                      <dd class="text-gray-700 font-bold text-right" id="ipoType">
                         N/A
                       </dd>
                     </div>
@@ -675,8 +675,8 @@ console.log(parametersObject)
  document.getElementById('status').innerHTML=ipodetails.metaData[parametersObject.isin].issuetype
  document.getElementById('bidPrice').innerHTML="₹"+" "+ipodetails.metaData[parametersObject.isin].floorprice+" "+"-"+" "+"₹"+ipodetails.metaData[parametersObject.isin].ceilingprice
  document.getElementById('lotSize').innerHTML=ipodetails.metaData[parametersObject.isin].tradinglot+" "+"Shares"
-// document.getElementById('offerType').innerHTML=ipodetails.metaData[parametersObject.isin].subType ||'N/A'
- document.getElementById('ipoType').innerHTML=ipodetails.metaData[parametersObject.isin].issuetype
+ document.getElementById('offerType').innerHTML=ipodetails.metaData[parametersObject.isin].issuetype ||'N/A'
+ document.getElementById('ipoType').innerHTML='N/A'
  document.getElementById('issueSize').innerHTML=ipodetails.metaData[parametersObject.isin].issuesize
 
 
@@ -714,14 +714,24 @@ let investortype = [];
 
 subCategorySettings.forEach((category) => {
 if (category.asbanonasba=='1') {
-  console.log(category.category)
+    let code=category.category
+    if(code='IND'){
+       code="Retail"
+    }
+    if (code === 'Retail') {
+      investortype.unshift(code);
+
+    } else {
+      investortype.push(code);
+    }
+
   
   const hiddenContent = document.getElementById('hiddencontent');
 
   hiddenContent.innerHTML += `
-  <input type="text" class="hidden" id="${code}-discountprice" value="${category.discountPrice || '0'}">
-  <input type="text"  class="hidden" id="${code}-minprice" value="${category.minValue}">
-  <input type="text"  class="hidden" id="${code}-maxprice" value="${category.maxUpiLimit}">
+  <input type="text"  id="${code}-discountprice" value="${category.discountPrice || '0'}">
+  <input type="text"   id="${code}-minprice" value="${category.minbidvalue}">
+  <input type="text"   id="${code}-maxprice" value="${category.maxbidvalue}">
 `;
 
   
@@ -769,6 +779,7 @@ investortype.forEach((type, index) => {
 let investorType;
 let discountpricevalue;
 let lotsvalue;
+
 const investmentfunction = (cacode, responsedata) => {
   investorType = cacode;
 
@@ -779,14 +790,28 @@ const investmentfunction = (cacode, responsedata) => {
   const discountPrice = Number(discountInput.value);
   const minPrice = Number(minInput.value);
   const maxPrice = Number(maxInput.value);
-  discountpricevalue=discountPrice
-  const bidPrice = Number(responsedata.nse.minPrice);
-  const bidMaxPrice = Number(responsedata.nse.maxPrice);
-  const lotSize = Number(responsedata.nse.lotSize);
+  discountpricevalue = discountPrice;
+
+  let bidPrice, bidMaxPrice, lotSize;
+
+  if (responsedata.nse) {
+    bidPrice = Number(responsedata.nse.minPrice);
+    bidMaxPrice = Number(responsedata.nse.maxPrice);
+    lotSize = Number(responsedata.nse.lotSize);
+  } else if (responsedata.metaData) {
+    const parametersObject = getDecryptedData();
+    const meta = responsedata.metaData[parametersObject.isin];
+    bidPrice = Number(meta.floorprice);
+    bidMaxPrice = Number(meta.ceilingprice);
+    lotSize = Number(meta.tradinglot);
+  } else {
+    console.error("Invalid data format");
+    return;
+  }
 
   const minInvestmentPerLot = bidPrice * lotSize;
   const maxInvestmentPerLot = bidMaxPrice * lotSize;
-  console.log(minPrice, maxPrice)
+
   document.getElementById('retailDiscount').innerText = "₹ " + discountPrice.toLocaleString();
 
   const maxLots = Math.floor(maxPrice / maxInvestmentPerLot);
@@ -796,18 +821,16 @@ const investmentfunction = (cacode, responsedata) => {
     document.getElementById('minimumInvestment').innerText = `1 Lot / ₹ ${minInvestmentPerLot.toLocaleString()}`;
     document.getElementById('maximumInvestment').innerText =
       `${maxLots} ${maxLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMaxInvestment.toLocaleString()}`;
-      lotsvalue=maxLots
+    lotsvalue = maxLots;
   } else {
     let minLots = Math.floor(minPrice / minInvestmentPerLot);
     let totalMinInvestment = minLots * minInvestmentPerLot;
 
-    // Keep incrementing until we reach or exceed minPrice
     while (totalMinInvestment < minPrice) {
       minLots++;
       totalMinInvestment = minLots * minInvestmentPerLot;
     }
 
-    // If min exceeds max, show warning
     if (totalMinInvestment > totalMaxInvestment) {
       document.getElementById('minimumInvestment').innerText = "Invalid range: min > max";
       document.getElementById('maximumInvestment').innerText = "Please adjust values";
@@ -816,14 +839,11 @@ const investmentfunction = (cacode, responsedata) => {
 
     document.getElementById('minimumInvestment').innerText =
       `${minLots} ${minLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMinInvestment.toLocaleString()}`;
-
     document.getElementById('maximumInvestment').innerText =
       `${maxLots} ${maxLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMaxInvestment.toLocaleString()}`;
-      lotsvalue
-      lotsvalue=maxLots
+    lotsvalue = maxLots;
   }
 };
-
 
 
 function redirect(){

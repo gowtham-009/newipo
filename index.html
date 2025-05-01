@@ -621,7 +621,7 @@
 localStorage.setItem('clientcode',clientcodeapp)
       const iporequiredDetails = {
         isin: company.isin,
-        ipoSymbol: company.ipoSymbol,
+        ipoSymbol: company.ipoSymbol || company.symbol,
         isCompanyFrom: source,
 
       }

@@ -689,6 +689,85 @@ decrementButton.addEventListener("click", () => {
 
 
 
+
+    document.getElementById('applyButton').addEventListener('click', async function () {
+
+
+const checkedRadio = document.querySelector('input[name="group1"]:checked');
+
+const checkedRadio2 = document.querySelector('input[name="group0"]:checked');
+const upiId = document.getElementById('upiIdInput').value.trim();
+const qty = document.getElementById('lotssum').innerText.trim();
+const priceInput = document.getElementById('price').value.trim();
+
+if (!checkedRadio || !checkedRadio2) {
+  alert('Please select both category and cutoff/bid options.');
+  return;
+}
+
+if (!upiId) {
+  alert('Please enter UPI ID.');
+  return;
+}
+
+const cutoff = (checkedRadio2.value === 'bid') ? 'true' : 'false';
+
+let apiurl = '';
+let authorization = '';
+
+if (type === 'BSE') {
+
+  authorization = '21279C8DC0753CD1A90DEBF3C1C5CEDB8B5B77E0455EE804C9CA03BB706CD02A';
+  apiurl = 'https://ipo.gwcindia.in/api/bse/v1/applyipo';
+} else if (type === 'NSE') {
+  apiurl = 'https://ipo.gwcindia.in/nse-api/api-apply-ipo.php';
+  // Set a default or blank Authorization if needed for NSE
+  authorization = '';
+} else {
+  alert('Unknown IPO source.');
+  return;
+}
+
+const formData = new FormData();
+formData.append('client');
+formData.append('ipoSymbol');
+formData.append('upiId', upiId);
+formData.append('category', checkedRadio.value);
+formData.append('qty', qty);
+formData.append('price', priceInput);
+formData.append('cutOff', cutoff);
+
+try {
+  const headers = {};
+
+  if (authorization) {
+    headers['Authorization'] = authorization;
+  }
+
+  const response = await fetch(apiurl, {
+    method: 'POST',
+    headers: headers,
+    body: formData
+  });
+
+  if (!response.ok) {
+    throw new Error('Network error, please try again. Status: ' + response.status);
+  }
+
+  const data = await response.json();
+  console.log(data);
+
+  const title = "";
+  showModal(title, data.message);
+
+} catch (error) {
+  console.error('Error:', error.message);
+}
+});
+
+
+
+
   </script>
 </body>
 
