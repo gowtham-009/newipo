@@ -161,7 +161,7 @@
               Open IPO's
               <span
                 class="mx-2 inline-flex items-center rounded-full bg-red-500 px-1.5 py-0.5 text-xs font-medium text-white"
-                id="countSpan">9</span>
+                id="countSpan"></span>
             </h2>
             <div class="mx-auto">
               <div class="my-2" id="shimmer">
@@ -315,7 +315,7 @@
           // 2. NSE Upcoming
           if (Array.isArray(data.upcoming)) {
             data.upcoming.forEach((company) => {
-              nseCount++;
+             // nseCount++;
               addCompanyToContainer(company, companiesContainer, "UPCOMING", "NSE");
             });
           }
@@ -338,7 +338,7 @@
           // 4. BSE Upcoming
           if (Array.isArray(data.metaData.upcoming)) {
             data.metaData.upcoming.forEach((company) => {
-              bseCount++;
+             // bseCount++;
               addCompanyToContainer(company, companiesContainer, "UPCOMING", "BSE");
             });
           }

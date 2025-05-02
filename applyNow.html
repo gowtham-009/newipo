@@ -178,65 +178,7 @@
 
         </div>
         <div class="flex justify-between px-5 py-1">
-          <div id="slide-over" class="relative z-10 hidden" aria-labelledby="slide-over-title" role="dialog"
-            aria-modal="true">
-            <!-- Background backdrop -->
-            <div class="fixed inset-0 bg-gray-500/75 opacity-0 transition-opacity" id="backdrop" aria-hidden="true">
-            </div>
 
-            <div class="fixed inset-0 overflow-hidden">
-              <div class="absolute inset-0 overflow-hidden">
-                <div class="pointer-events-none fixed inset-x-0 bottom-0 flex max-h-full">
-                  <!-- Slide-over panel (bottom to top) -->
-                  <div
-                    class="pointer-events-auto relative w-full max-h-[50vh] transform translate-y-full transition-transform duration-500 ease-in-out"
-                    id="panel">
-                    <!-- Close button -->
-                    <div class="absolute right-0 top-0 pr-4 pt-2">
-                      <button id="close-drawer-btn" type="button"
-                        class="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
-                        <span class="absolute -inset-2.5"></span>
-                        <span class="sr-only">Close panel</span>
-                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                          aria-hidden="true">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    </div>
-
-                    <div class="flex h-full flex-col overflow-y-scroll bg-white py-4 shadow-xl">
-                      <div class="px-4 sm:px-6">
-                        <h2 class="text-base font-semibold text-gray-900" id="slide-over-title">Panel title</h2>
-                      </div>
-                      <div class="relative mt-4 flex-1 px-4 sm:px-6">
-                        <!-- Your content here -->
-                        <div class="w-full" style="height: 200px;">
-
-                          <div class="w-full flex gap-2 mt-2">
-                            <div class="w-full ">
-                              <p class="text-left text-gray-600">Amount</p>
-                            </div>
-                            <div class="w-full ">
-                              <p class="text-right text-gray-600 px-4" id="amount"></p>
-                            </div>
-                          </div>
-                          <div class="w-full flex gap-2 mt-2">
-                            <div class="w-full">
-                              <p class="text-left text-gray-600">Discount Amount</p>
-                            </div>
-                            <div class="w-full px-4">
-                              <p class="text-right text-gray-600" id="discountamount"></p>
-                            </div>
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
 
 
@@ -328,9 +270,9 @@
       </div>
     </div>
 
-    <div class="fixed-bottom-button bg-white max-w-4xl mx-auto">
-      <div class="flex justify-between px-4 py-2">
-        <div class="flex cursor-pointer" id="open-drawer-btn">
+    <div class="fixed-bottom-button bg-white w-full mx-auto" >
+      <div class="flex justify-between px-4 w-full py-2" >
+        <div class="flex cursor-pointer " id="open-drawer-btn" >
           Total Payable amount
           <span>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -341,11 +283,13 @@
         </div>
         <div class="px-4 font-bold"><span id="totalAmount"></span> </div>
       </div>
+    <div class="px-2">
       <button type="button" disabled
-        class="rounded-md custom-bg py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none mx-4 w-[90%] md:w-[95%] disabled:opacity-50 disabled:cursor-not-allowed"
-        id="applyButton">
-        Apply for IPO
-      </button>
+      class="rounded-md custom-bg py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none  w-full disabled:opacity-50 disabled:cursor-not-allowed"
+      id="applyButton">
+      Apply for IPO
+    </button>
+    </div>
 
       <div class="py-2 flex justify-center text-gray-500 text-sm">
         By applying, you accept the
@@ -381,6 +325,64 @@
 
   <input type="text" class="hidden" id="maxlots">
   <input type="text" class="hidden" id="finalamount">
+
+
+
+  <div id="slide-over" class="relative z-10 hidden" aria-labelledby="slide-over-title" role="dialog"
+  aria-modal="true">
+  <!-- Background backdrop -->
+  <div class="fixed inset-0 bg-gray-500/75 opacity-0 transition-opacity" id="backdrop" aria-hidden="true">
+  </div>
+
+  <div class="fixed inset-0 overflow-hidden">
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="pointer-events-none fixed inset-x-0 bottom-0 flex max-h-full">
+        <!-- Slide-over panel (bottom to top) -->
+        <div
+          class="pointer-events-auto relative w-full max-h-[50vh] transform translate-y-full transition-transform duration-500 ease-in-out"
+          id="panel">
+          <!-- Close button -->
+          <div class="absolute right-0 top-0 pr-4 pt-2">
+            <button id="close-drawer-btn" type="button"
+              class="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
+              <span class="absolute -inset-2.5"></span>
+             
+            </button>
+          </div>
+
+          <div class="flex h-full flex-col overflow-y-scroll bg-white py-4 shadow-xl">
+            <div class="px-4 sm:px-6">
+              
+            </div>
+            <div class="relative mt-4 flex-1 px-4 sm:px-6">
+              <!-- Your content here -->
+              <div class="w-full" style="height: 200px;">
+
+                <div class="w-full flex gap-2 mt-2">
+                  <div class="w-full ">
+                    <p class="text-left text-gray-600">Total Amount</p>
+                  </div>
+                  <div class="w-full ">
+                    <p class="text-right text-gray-600 px-4" id="amount"></p>
+                  </div>
+                </div>
+                <div class="w-full flex gap-2 mt-2">
+                  <div class="w-full">
+                    <p class="text-left text-gray-600">Discount Amount (-)</p>
+                  </div>
+                  <div class="w-full px-4">
+                    <p class="text-right text-gray-600" id="discountamount"></p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script src="js/drawer.js"></script>
