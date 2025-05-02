@@ -158,7 +158,7 @@
             <!-- <div class="flex justify-between p-4 font-bold text-xl"> -->
             <div class="grid grid-cols-12 my-4">
               <!-- First SVG Icon -->
-              <div class="col-span-2 flex justify-start px-5 items-center clickable-div" data-target="index.html">
+              <div class="col-span-2 flex justify-start px-5 items-center clickable-div"onclick="window.location.href='index.html'">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-6 w-6">
                   <path fill-rule="evenodd"
                     d="M11.03 3.97a.75.75 0 0 1 0 1.06l-6.22 6.22H21a.75.75 0 0 1 0 1.5H4.81l6.22 6.22a.75.75 0 1 1-1.06 1.06l-7.5-7.5a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 0 1 1.06 0Z"
@@ -589,13 +589,13 @@
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    const clickableDivs = document.querySelectorAll(".clickable-div");
-    clickableDivs.forEach((div) => {
-      div.addEventListener("click", function () {
-        const targetPage = this.getAttribute("data-target");
-        window.location.href = targetPage;
-      });
-    });
+    // const clickableDivs = document.querySelectorAll(".clickable-div");
+    // clickableDivs.forEach((div) => {
+    //   div.addEventListener("click", function () {
+    //     const targetPage = this.getAttribute("data-target");
+    //     window.location.href = targetPage;
+    //   });
+    // });
 
 
 

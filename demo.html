@@ -289,7 +289,7 @@
       `https://ipo.gwcindia.in/nse-api/api-client-applications.php?clientCode=${clientcodeapp}`;
 
       const applicationApiUrlbse =
-      `https://ipo.gwcindia.in/api/bse/v1/ipoapp`;
+      `https://ipo.gwcindia.in/api/bse/v1/ipoapp?clientCode=${clientcodeapp}`;
     const companyList = [];
 
     const bseApiUrl = "https://ipo.gwcindia.in/api/bse/v1/ipolist";
@@ -486,50 +486,139 @@
       }, 2000);
     };
 
-    async function fetchApplications() {
-    document.getElementById("shimmerApplications").style.display = "block";
-    document.getElementById("no-shimmerApplications").style.display = "none";
+    function fetchApplications() {
+      document.getElementById("shimmerApplications").style.display = "block";
+      document.getElementById("no-shimmerApplications").style.display =
+        "none";
 
-    const nseurl = applicationApiUrl;
-    const bseurl = applicationApiUrlbse;
+      fetch(applicationApiUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(
+              "Network response was not ok " + response.statusText
+            );
+          }
+          return response.json();
+        })
+        .then((data) => {
+       
+          if (!data.applications) {
+            console.error("Applications property is missing in the response");
+            return;
+          }
 
-    const formData = new FormData();
-    formData.append("clientCode", clientcodeapp); // Removed extra quote at the start
+          const applicationsList =
+            document.getElementById("applicationsList");
+          applicationsList.innerHTML = "";
+          if (
+            Array.isArray(data.applications) &&
+            data.applications.length > 0
+          ) {
+            data.applications.forEach((application) => {
 
-    try {
-        // Fetch NSE data (GET)
-        const nseResponse = await fetch(nseurl, {
-            method: 'GET',
+              let formattedDate = 'N/A';
+
+              if (application.responseDateTime) {
+                const [year, month, day] = application.responseDateTime.split(' ')[0].split('-');
+                if (year && month && day) {
+                  formattedDate = `${day}-${month}-${year}`;
+                }
+              }
+
+              const applicationDiv = document.createElement("li");
+              applicationDiv.classList.add(
+                "overflow-hidden",
+                "rounded-xl",
+                "border",
+                "border-gray-200",
+                "py-2"
+              );
+
+              applicationDiv.addEventListener("click", function () {
+                sendDataToNewPage(application, "applicationdetailpage.html"); // URL for IPO details
+              });
+
+              applicationDiv.innerHTML = `
+                                <div class="gap-x-4 border-gray-900/5 cursor-pointer ">
+                                    <div>
+                                        <div class="flex items-center gap-x-4 border-gray-900/5 py-2 px-3">
+                                          
+                                              <div class="size-12 flex items-center text-center justify-center font-semibold rounded-lg bg-white object-cover ring-1 ring-gray-900/10 ">IPO</div>
+            
+            <div>
+                                            <div>
+                                                <div class="text-sm/6 font-medium text-gray-900">${application.ipoName || "N/A"
+                }</div>
+                                                <span class="rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">MAINBOARD</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                     <div class="flex gap-2 w-full ">
+                                      <div class="text-sm/6 font-medium w-full text-gray-900 px-3"> Application no <br> ${application.applicationNo || "N/A"
+                }</div>
+
+                                                 <div class="text-sm/6 w-full font-medium text-gray-900 px-3">
+                                                  <p class="text-right" >Applied Date <br> ${formattedDate
+                }</p>
+                                                  </div>
+                                      </div>
+                                    <dl class="-my-3 divide-y divide-gray-100 px-3 py-4 text-sm/6">
+                                        <div class="flex justify-between gap-x-4 py-3">
+                                            <div>
+                                                <dt class="text-gray-500 flex justify-end">Invested</dt>
+                                                <dd class="text-gray-700 font-bold flex justify-start px-1 ">₹${application.totalPrice ||
+                "N/A"
+                }</dd>
+                                            </div>
+                                            <div >
+                                                <dt class="text-gray-500 flex justify-end">Bit Price</dt>
+                                                <dd class="text-gray-700 font-bold flex justify-start">₹${application.price || "N/A"
+                }</dd>
+                                            </div>
+                                            <div>
+                                                <dt class="text-gray-500 flex justify-end">Listed On</dt>
+                                                <dd class="text-gray-700 font-bold"><time datetime="${application.requestedDateTime
+                }">${new Date(
+                  application.requestedDateTime
+                ).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}</time></dd>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-between gap-x-4 p-3 rounded-md bg-gray-100">
+                                            <dt class="text-gray-500"><span class="inline-flex items-center rounded-md bg-white px-1.5 py-0.5 text-xs font-medium text-gray-600">Day 1</span></dt>
+                                            <dt>
+                                                <div class="font-bold text-gray-900">Overall Subscription</div>
+                                            </dt>
+                                            <dd class="flex items-start gap-x-2">
+                                                <div class="font-semibold text-green-600">0.71x</div>
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            `;
+              applicationsList.appendChild(applicationDiv);
+            });
+          } else {
+            applicationsList.innerHTML = "<li>No applications found.</li>";
+          }
+
+          document.getElementById("shimmerApplications").style.display =
+            "none";
+          document.getElementById("no-shimmerApplications").style.display =
+            "block";
+        })
+        .catch((error) => {
+          console.error("Error fetching applications:", error);
+          document.getElementById("shimmerApplications").style.display =
+            "none";
+          document.getElementById("no-shimmerApplications").style.display =
+            "block";
         });
-        if (!nseResponse.ok) throw new Error('Failed to fetch NSE data');
-        const nseData = await nseResponse.json();
-        console.log("NSE Data:", nseData);
-
-        // Fetch BSE data (POST with headers and FormData)
-        const bseResponse = await fetch('https://ipo.gwcindia.in/api/bse/v1/ipoapp', { 
-            method: 'POST',
-            headers: {
-                'Authorization': "21279C8DC0753CD1A90DEBF3C1C5CEDB8B5B77E0455EE804C9CA03BB706CD02A",
-                // DO NOT include 'Content-Type' when sending FormData—it will be set automatically
-            },
-              mode: "cors",
-            body: formData,
-            credentials: 'include' // Include cookies (needed if using PHPSESSID)
-        });
-        if (!bseResponse.ok) throw new Error('Failed to fetch BSE data');
-        const bseData = await bseResponse.json();
-        console.log("BSE Data:", bseData);
-
-        // You can process or merge the data here
-        // Example: displayCombinedData(nseData, bseData);
-
-    } catch (error) {
-        console.error("Error fetching applications:", error);
-    } finally {
-        document.getElementById("shimmerApplications").style.display = "none";
-        document.getElementById("no-shimmerApplications").style.display = "block";
     }
-}
 
     function sendDataToNewPage(company, url, source) {
 localStorage.setItem('clientcode',clientcodeapp)
