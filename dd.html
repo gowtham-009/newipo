@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IPO API Request</title>
+</head>
+<body>
+  <h1>IPO API Request</h1>
+  <button >Send Request</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    function sendRequest() {
+      const myHeaders = new Headers();
+      myHeaders.append("Authorization", "21279C8DC0753CD1A90DEBF3C1C5CEDB8B5B77E0455EE804C9CA03BB706CD02A");
+      myHeaders.append("Cookie", "PHPSESSID=86ikmrbq26d8cv7lbqr7r1q07u");
+
+      const formdata = new FormData();
+      formdata.append("clientCode", "GZ10219");
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: formdata,
+        redirect: "follow"
+      };
+
+      fetch("https://ipo.gwcindia.in/api/bse/v1/ipoapp", requestOptions)
+        .then(response => response.text())
+        .then(result => {
+          console.log(result);
+          document.getElementById("output").textContent = result;
+        })
+        .catch(error => {
+          console.error(error);
+          document.getElementById("output").textContent = "Error: " + error;
+        });
+    }
+
+    sendRequest()
+  </script>
+</body>
+</html>
