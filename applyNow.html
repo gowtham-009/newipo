@@ -154,7 +154,7 @@
         <!-- IPO Information -->
         <div>
 
-          <div class="w-full flex flex-col p-2 px-2 py-2 ">
+          <div class="w-full flex flex-col  px-2 py-2 ">
             <div class="w-full flex items-center gap-2">
               <span id="companyName" class="text-2xl font-bold">Loading...</span>
               <span id="mode"
@@ -172,12 +172,12 @@
 
         </div>
         <div class="bg-gray-100 h-2"></div>
-        <div id="investorTypesContainer" class="px-5 py-2">
+        <div id="investorTypesContainer" class="px-2 py-1">
 
 
 
         </div>
-        <div class="flex justify-between px-5 py-2">
+        <div class="flex justify-between px-5 py-1">
           <div id="slide-over" class="relative z-10 hidden" aria-labelledby="slide-over-title" role="dialog"
             aria-modal="true">
             <!-- Background backdrop -->
@@ -192,7 +192,7 @@
                     class="pointer-events-auto relative w-full max-h-[50vh] transform translate-y-full transition-transform duration-500 ease-in-out"
                     id="panel">
                     <!-- Close button -->
-                    <div class="absolute right-0 top-0 pr-4 pt-4">
+                    <div class="absolute right-0 top-0 pr-4 pt-2">
                       <button id="close-drawer-btn" type="button"
                         class="relative rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white">
                         <span class="absolute -inset-2.5"></span>
@@ -204,11 +204,11 @@
                       </button>
                     </div>
 
-                    <div class="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                    <div class="flex h-full flex-col overflow-y-scroll bg-white py-4 shadow-xl">
                       <div class="px-4 sm:px-6">
                         <h2 class="text-base font-semibold text-gray-900" id="slide-over-title">Panel title</h2>
                       </div>
-                      <div class="relative mt-6 flex-1 px-4 sm:px-6">
+                      <div class="relative mt-4 flex-1 px-4 sm:px-6">
                         <!-- Your content here -->
                         <div class="w-full" style="height: 200px;">
 
@@ -290,7 +290,7 @@
 
         </div>
         <div class="py-1 my-2 bg-gray-100"></div>
-        <div class="flex justify-between hidden px-5 py-3 bg-gray-100 m-4 rounded-md" id="nseretail">
+        <div class="flex justify-between hidden px-5 py-2 bg-gray-100 m-2 rounded-md" id="nseretail">
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="blue" class="h-6 w-6">
               <path fill-rule="evenodd"
@@ -303,7 +303,7 @@
             <button type="button" onclick="modifyBtn()">MODIFY</button>
           </div>
         </div>
-        <div class="px-5 py-2">
+        <div class="px-5 py-1">
           <label class="block text-gray-600">Enter UPI ID</label>
           <p class="text-gray-500 text-sm py-2">
             Use UPI ID linked to your bank account
@@ -573,7 +573,7 @@
         if (nse) {
           document.getElementById('loading').classList.add('hidden')
           document.getElementById('maincontent').classList.remove('hidden')
-          
+
           document.getElementById("companyName").textContent = nse.ipoName || "N/A";
           document.getElementById("priceRange").textContent = `₹ ${nse.minPrice} - ₹ ${nse.maxPrice}`;
 
