@@ -950,7 +950,6 @@
     const updateButton = document.getElementById('updateButton')
     updateButton.addEventListener('click', function () {
 
-      alert('hi')
   const upiId = document.getElementById('upiIdInput').value.trim();
   const qty = document.getElementById('qty').value.trim();
   const allowedPricesRaw = document.getElementById('maxval').value.trim();
@@ -987,10 +986,10 @@
         .then((response) => response.json())
         .then((data) => {
           console.log(data)
-          if (data.status === "success") {
-            showModal("Success", "Application cancelled successfully");
+          if (data.status === "ok") {
+            showModal("Success", data.message);
           } else {
-            showModal("Error", "Failed to cancel application");
+            showModal("Error", data.message);
           }
         })
         .catch((error) => {
