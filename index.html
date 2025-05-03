@@ -291,7 +291,7 @@
 
       let nseCount = 0;
       let bseCount = 0;
-
+      let debtCount = 0;
       // First fetch NSE Data
       fetch(apiUrl)
         .then((response) => response.json())
@@ -301,7 +301,13 @@
           // 1. NSE Mainboard (Open)
           if (Array.isArray(data.open)) {
             data.open.forEach((company) => {
+
               nseCount++;
+              if(company.issueType === 'DEBT'){
+                debtCount++;
+           
+              }
+            
               addCompanyToContainer(company, companiesContainer, "MAINBOARD", "NSE");
             });
           }
@@ -324,7 +330,12 @@
           // 3. BSE Mainboard (Open)
           if (Array.isArray(data.metaData.open)) {
             data.metaData.open.forEach((company) => {
+          
               bseCount++;
+              if(company.issuetype === 'DEBT'){
+                debtCount++;
+           
+              }
               addCompanyToContainer(company, companiesContainer, "MAINBOARD", "BSE");
             });
           }
@@ -337,7 +348,7 @@
             });
           }
 
-          updateIpoCount(nseCount, bseCount); // Update count after both NSE and BSE loaded
+          updateIpoCount(nseCount, bseCount, debtCount); // Update count after both NSE and BSE loaded
         })
         .catch((error) => {
           console.error("Error fetching companies:", error);
@@ -346,104 +357,97 @@
 
 
     function addCompanyToContainer(company, container, type, source) {
-      const companyDiv = document.createElement("li");
-      companyDiv.classList.add(
-        "overflow-hidden",
-        "rounded-xl",
-        "border",
-        "border-gray-200",
-        "py-2",
-        "clickable-div"
-      );
+  // Skip rendering if issueType is "DEBT"
+  if (company.issueType === 'DEBT' || company.issuetype==='DEPT') { 
+    return;
+  }
 
-      companyDiv.addEventListener("click", function () {
+  const companyDiv = document.createElement("li");
+  companyDiv.classList.add(
+    "overflow-hidden",
+    "rounded-xl",
+    "border",
+    "border-gray-200",
+    "py-2",
+    "clickable-div"
+  );
 
-        sendDataToNewPage(company, "newipodetails.html", source);
-      });
+  companyDiv.addEventListener("click", function () {
+    sendDataToNewPage(company, "newipodetails.html", source);
+  });
 
-      companyDiv.innerHTML = `
-        <div class="flex items-center gap-x-4 border-gray-900/5 py-2 px-3 cursor-pointer">
-          <div class="size-12 flex items-center text-center justify-center font-semibold rounded-lg bg-white object-cover ring-1 ring-gray-900/10 ">IPO</div>
-            
-            <div>
-                <div class="text-sm/6 font-medium text-gray-900">${company.ipoName ? company.ipoName : company.companyName
-        }</div>
-              <div class="w-full flex gap-2">
-                
-                  <span class="${source === 'NSE'
-          ? 'rounded-sm bg-red-500 px-1 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-red-500/20'
-          : 'rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10'
-        }">
-                    ${source}
-                  </span>
-                    <span  class="rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">${type}</span>  
 
-                      <span  class="rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">${company.subType ? company.subType || '' : company.issuetype || ''}</span>  
+  companyDiv.innerHTML = `
+    <div class="flex items-center gap-x-4 border-gray-900/5 py-2 px-3 cursor-pointer">
+      <div class="size-12 flex items-center text-center justify-center font-semibold rounded-lg bg-white object-cover ring-1 ring-gray-900/10">IPO</div>
+        
+        <div>
+            <div class="text-sm/6 font-medium text-gray-900">${company.ipoName ? company.ipoName : company.companyName}</div>
+          <div class="w-full flex gap-2">
+              <span class="${source === 'NSE'
+                ? 'rounded-sm bg-red-500 px-1 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-red-500/20'
+                : 'rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10'
+              }">${source}</span>
 
-                </div>
-            </div>
+              <span class="rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">${type}</span>  
+
+              <span class="rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">${company.subType || company.issuetype || ''}</span>  
+          </div>
         </div>
-        <dl class="-my-3 divide-y divide-gray-100 px-3 py-4 text-sm/6">
-            <div class="flex justify-between gap-x-4 py-3">
-                <div>
-                    <dt class="text-gray-500">Opens on</dt>
-                    <dd class="text-gray-700 font-bold" >
-                      <time datetime="${company.biddingStartDate || company.opendate}">
-                        ${new Date(company.biddingStartDate || company.opendate).toLocaleDateString(
-                                "en-GB",
-                                { day: "2-digit", month: "short", year: "numeric" }
-                              )}
-                      </time> </dd>
-                </div>
-                <div class="">
-                    <dt class="text-gray-500 flex justify-end">Minimum Investment</dt>
-                    <dd class="text-gray-700 font-bold flex items-center justify-end" id="maxInvestment">
-              
-
-
-        ${calculateMaxInvestment(
-          company.minPrice ? company.minPrice : company.floorprice,
-          company.lotSize ? company.lotSize : company.tradinglot
-        )}
-                        
-                    </dd>
-                </div>
-            </div>
-
-            <div class="w-full flex">
-               <div class="w-full">
-                <dt class="text-gray-500">Close</dt>
-                <dd class="text-gray-700 font-bold" >
-                 
-         <time datetime="${company.biddingEndDate || company.closedate}">
-  ${new Date(company.biddingEndDate || company.closedate).toLocaleDateString(
-          "en-GB",
-          { day: "2-digit", month: "short", year: "numeric" }
-        )}
-</time>
-                  </dd>
-                </div>
-
-                <div class="w-full flex justify-end items-center" >
-                  <span class="ml-2 text-gray-700 font-bold" >${company.minBidQuantity ? company.minBidQuantity : company.tradinglot
-        } shares</span>
-                  </div>
-            </div>
-            <div class="flex justify-between gap-x-4 p-3 rounded-md bg-gray-100">
-              <dt>
-                    <div class="font-bold text-gray-900">Overall Subscription</div>
-                </dt>
-                <dd class="flex items-start gap-x-2">
-                    <div class="font-semibold text-green-600">0.71x</div>
+    </div>
+    <dl class="-my-3 divide-y divide-gray-100 px-3 py-4 text-sm/6">
+        <div class="flex justify-between gap-x-4 py-3">
+            <div>
+                <dt class="text-gray-500">Opens on</dt>
+                <dd class="text-gray-700 font-bold">
+                  <time datetime="${company.biddingStartDate || company.opendate}">
+                    ${new Date(company.biddingStartDate || company.opendate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                  </time>
                 </dd>
             </div>
-        </dl>
-    `;
-      container.appendChild(companyDiv);
-    }
+            <div>
+                <dt class="text-gray-500 flex justify-end">Minimum Investment</dt>
+                <dd class="text-gray-700 font-bold flex items-center justify-end" id="maxInvestment">
+                  ${calculateMaxInvestment(
+                    company.minPrice ? company.minPrice : company.floorprice,
+                    company.lotSize ? company.lotSize : company.tradinglot
+                  )}
+                </dd>
+            </div>
+        </div>
+
+        <div class="w-full flex">
+          <div class="w-full">
+            <dt class="text-gray-500">Close</dt>
+            <dd class="text-gray-700 font-bold">
+              <time datetime="${company.biddingEndDate || company.closedate}">
+                ${new Date(company.biddingEndDate || company.closedate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+              </time>
+            </dd>
+          </div>
+
+          <div class="w-full flex justify-end items-center">
+            <span class="ml-2 text-gray-700 font-bold">${company.minBidQuantity || company.tradinglot} shares</span>
+          </div>
+        </div>
+
+        <div class="flex justify-between gap-x-4 p-3 rounded-md bg-gray-100">
+          <dt>
+            <div class="font-bold text-gray-900">Overall Subscription</div>
+          </dt>
+          <dd class="flex items-start gap-x-2">
+            <div class="font-semibold text-green-600">0.71x</div>
+          </dd>
+        </div>
+    </dl>
+  `;
+
+  container.appendChild(companyDiv);
+}
+
     fetchCompanies();
-    function updateIpoCount(nseCount, bseCount) {
-      const totalCount = nseCount + bseCount; // Calculate total count
+    function updateIpoCount(nseCount, bseCount, debtCount) {
+      const totalCount = (nseCount - debtCount) + bseCount; // Calculate total count
       const countSpan = document.getElementById('countSpan'); // Select the span by ID
       countSpan.textContent = totalCount; // Update the span with the total count
     }
@@ -471,6 +475,16 @@
     fetchClientInfo();
     fetchApplications();
     window.onload = function () {
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const tab = urlParams.get('app'); 
+
+      if (tab === 'yourapplication') {
+        document.getElementById('tab2').checked = true;
+      } else {
+        document.getElementById('tab1').checked = true;
+      }
+
       applicationActivePage('present')
       setTimeout(() => {
         document.getElementById("shimmer").style.display = "none";
@@ -599,7 +613,7 @@ function applicationFilter(filteredData) {
 
 const present = (data) => {
 
-  console.log("wlkjer",data)
+  
   const applicationsList = document.getElementById("applicationsListnse");
   applicationsList.innerHTML = "";
 
@@ -622,7 +636,13 @@ const present = (data) => {
     applicationDiv.classList.add("overflow-hidden", "rounded-xl", "border", "border-gray-200", "py-2");
 
     applicationDiv.addEventListener("click", () => {
-      sendupdatedata(application, "applicationupdate.html");
+      if(application.applicationStatus === "failed" || application.appReqType === "D"){
+         
+         
+        }
+        else{
+          sendupdatedata(application, "applicationupdate.html");
+        }
     });
 
     applicationDiv.innerHTML = `
@@ -640,6 +660,17 @@ const present = (data) => {
                         
 
             <span class="rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">MAINBOARD</span>
+            ${application.applicationStatus === "failed" ? `
+  <span class="rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+    Failed
+  </span>
+` : ''}
+
+ ${application.appReqType === "D" ? `
+  <span class="rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+    Cancelled
+  </span>
+` : ''}
           </div>
         </div>
         <div class="flex gap-2 w-full px-3">
@@ -689,7 +720,7 @@ const present = (data) => {
 
 
 const past = (data) => {
-  console.log("jhiu",data);
+
   const applicationsList = document.getElementById("applicationsListbse");
   applicationsList.innerHTML = "";
 
@@ -712,10 +743,16 @@ const past = (data) => {
     applicationDiv.classList.add("overflow-hidden", "rounded-xl", "border", "border-gray-200", "py-2");
 
     applicationDiv.addEventListener("click", () => {
-      sendupdatedata(application, "applicationupdate.html");
+      if(application.applicationStatus === "failed" || application.appReqType === "D"){
+         
+      }
+      else{
+        sendupdatedata(application, "applicationupdate.html");
+      }
+    
     });
 
-    console.log(application, "application")
+ 
     applicationDiv.innerHTML = `
       <div class="gap-x-4 border-gray-900/5 cursor-pointer">
         <div class="flex items-center gap-x-4 border-gray-900/5 py-2 px-3">
@@ -727,6 +764,17 @@ const past = (data) => {
           : 'rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10'
         }">${application.source || "N/A"}</span>
                     <span class="rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">MAINBOARD</span>
+${application.applicationStatus === "failed" ? `
+  <span class="rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+    Failed
+  </span>
+` : ''}
+
+${application.appReqType === "D" ? `
+  <span class="rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
+    Cancelled
+  </span>
+` : ''}
           </div>
         </div>
         <div class="flex gap-2 w-full px-3">
