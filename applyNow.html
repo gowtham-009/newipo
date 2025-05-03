@@ -780,69 +780,52 @@
     displayIpoDetails();
 
 
-    const upid = document.getElementById('upiIdInput')
-    const price = document.getElementById('price')
-    const applybutton = document.getElementById('applyButton')
+    const upid = document.getElementById('upiIdInput');
+const price = document.getElementById('price');
+const applybutton = document.getElementById('applyButton');
 
+function checkInputs() {
+  let cacode = investor;
 
+  const minInput = document.getElementById(`${cacode}-minprice`);
+  const maxInput = document.getElementById(`${cacode}-maxprice`);
+  const minvalinput = Number(minInput.value);
+  const maxvalinput = Number(maxInput.value);
+  const finalvalue = Number(document.getElementById('finalamount').value);
 
+  const minprice = Number(document.getElementById('minval').value);
+  const maxprice = Number(document.getElementById('maxval').value);
+  const priceValue = Number(price.value);
 
+  const isPriceInRange = priceValue >= minprice && priceValue <= maxprice;
 
+  // Show error ONLY if price is out of range
+  if (price.value && !isPriceInRange) {
+    document.getElementById('errormsg').innerText = `Please enter a value between ${minprice} - ${maxprice}`;
+  } else {
+    document.getElementById('errormsg').innerText = "";
+  }
 
+  const isValid =
+    upid.value &&
+    price.value &&
+    isPriceInRange &&
+    finalvalue >= minvalinput &&
+    finalvalue <= maxvalinput;
 
-    function checkInputs() {
-      let cacode = investor
+  if (isValid) {
+    applybutton.disabled = false;
+    applybutton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+    applybutton.classList.add('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
+  } else {
+    applybutton.disabled = true;
+    applybutton.classList.add('bg-gray-400', 'cursor-not-allowed');
+    applybutton.classList.remove('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
+  }
+}
 
-
-      const minInput = document.getElementById(`${cacode}-minprice`);
-      const maxInput = document.getElementById(`${cacode}-maxprice`);
-      const minvalinput = minInput.value
-      const maxvalinput = maxInput.value
-      const finalavlaue = Number(document.getElementById('finalamount').value)
-
-
-      const minprice = Number(document.getElementById('minval').value)
-      const maxprice = Number(document.getElementById('maxval').value)
-
-
-
-
-      const isValid =
-        upid.value &&
-        price.value &&
-        price.value >= minprice &&
-        price.value <= maxprice &&
-
-
-        finalavlaue >= minvalinput &&
-        finalavlaue <= maxvalinput
-
-
-
-
-
-
-
-      if (isValid) {
-
-
-        applybutton.disabled = false;
-        applybutton.classList.remove('bg-gray-400', 'cursor-not-allowed');
-        applybutton.classList.add('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
-      } else {
-        applybutton.disabled = true;
-        applybutton.classList.add('bg-gray-400', 'cursor-not-allowed');
-        applybutton.classList.remove('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
-
-      }
-    }
-
-    upid.addEventListener('input', checkInputs);
-    price.addEventListener('input', checkInputs);
-
-
-
-
+upid.addEventListener('input', checkInputs);
+price.addEventListener('input', checkInputs);
 
 
 

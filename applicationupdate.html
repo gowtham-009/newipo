@@ -869,7 +869,9 @@
         applybutton.disabled = false;
         applybutton.classList.remove('bg-gray-400', 'cursor-not-allowed');
         applybutton.classList.add('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
+        document.getElementById('errormsg').innerText = " ";
       } else {
+        document.getElementById('errormsg').innerText = "please enter value between " + minprice + " - " + maxprice;
         applybutton.disabled = true;
         applybutton.classList.add('bg-gray-400', 'cursor-not-allowed');
         applybutton.classList.remove('bg-blue-500', 'hover:bg-blue-600', 'cursor-pointer');
