@@ -274,10 +274,18 @@
 
   <script>
 
+const params = new URLSearchParams(window.location.search);
+const clientCode = params.get("clientcode");
+
+
+const cleanClientCode = clientCode?.replace(/^"|"$/g, "");
+
+
+
     const apiUrl = "https://ipo.gwcindia.in/nse-api/api-ipo-master.php";
-    const clientcodeapp = 'GZ10219'
+ 
     const applicationApiUrl =
-      `https://ipo.gwcindia.in/nse-api/api-client-applications.php?clientCode=${clientcodeapp}`;
+      `https://ipo.gwcindia.in/nse-api/api-client-applications.php?clientCode=${cleanClientCode}`;
 
       const applicationApiUrlbse =
       `https://ipo.gwcindia.in/api/bse/v1/ipoapp`;
@@ -451,9 +459,9 @@
       const countSpan = document.getElementById('countSpan'); // Select the span by ID
       countSpan.textContent = totalCount; // Update the span with the total count
     }
-    const clientcode = 'GZ10219'
+
     const clientInfoUrl =
-      `https://ipo.gwcindia.in/nse-api/api-client-info.php?clientCode=${clientcode}`;
+      `https://ipo.gwcindia.in/nse-api/api-client-info.php?clientCode=${cleanClientCode}`;
     function fetchClientInfo() {
       fetch(clientInfoUrl)
         .then((response) => response.json())
@@ -504,7 +512,7 @@
      let applicationglobaldata = [];
 
     const formData = new FormData();
-    formData.append("clientCode", clientcodeapp);
+    formData.append("clientCode", cleanClientCode);
 
     try {
         // Fetch from NSE (GET)
@@ -823,8 +831,9 @@ ${application.appReqType === "D" ? `
 
 
     function sendDataToNewPage(company, url, source) {
-localStorage.setItem('clientcode',clientcodeapp)
+   // localStorage.setItem('clientcode',clientcodeapp)
       const iporequiredDetails = {
+        clientCode: cleanClientCode,
         isin: company.isin,
         ipoSymbol: company.ipoSymbol || company.symbol,
         isCompanyFrom: source,
@@ -844,7 +853,7 @@ localStorage.setItem('clientcode',clientcodeapp)
 
 
     function sendupdatedata(company, url) {
-   localStorage.setItem('clientcode',clientcodeapp)
+  
       const iporequiredDetails = {
         applicationNo: company.applicationNo,
         clientCode: company.clientCode,

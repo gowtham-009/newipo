@@ -620,6 +620,7 @@
 
     window.onload = function () {
       getDecryptedData();
+      console.log(getDecryptedData(), "getDecryptedData");
       infoDetails();
     };
 
@@ -1017,7 +1018,7 @@ function redirect(){
   const parametersObject = getDecryptedData();
    
    const applydata={
-  
+    clientCode: parametersObject.clientCode,
     investortype:investorType,
     ipoSymbol:parametersObject.ipoSymbol,
     isCompanyFrom:parametersObject.isCompanyFrom,

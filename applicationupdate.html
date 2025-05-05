@@ -815,11 +815,17 @@
     }
 
     document.getElementById("closeModal").addEventListener("click", () => {
-      document.getElementById("responseModal").classList.add("hidden");
-      let appValue = "yourapplication";
-     window.location.href = `index.html?app=${encodeURIComponent(appValue)}`;
+  const ipoDetails = getDecryptedData();
 
-    });
+  document.getElementById("responseModal").classList.add("hidden");
+
+  let appValue = "yourapplication";
+  let clientCode = ipoDetails.clientCode;
+
+  const url = `index.html?app=${encodeURIComponent(appValue)}&clientcode=${encodeURIComponent(clientCode)}`;
+  window.location.href = url;
+});
+
 
 
     let selectedInvestorType = "Retail";

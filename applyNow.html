@@ -416,6 +416,7 @@
     window.onload = function () {
       getDecryptedData();
 
+     
 
     };
 
@@ -764,11 +765,17 @@
     }
 
     document.getElementById("closeModal").addEventListener("click", () => {
-      document.getElementById("responseModal").classList.add("hidden");
-      let appValue = "yourapplication";
-     window.location.href = `index.html?app=${encodeURIComponent(appValue)}`;
+  const ipoDetails = getDecryptedData();
 
-    });
+  document.getElementById("responseModal").classList.add("hidden");
+
+  let appValue = "yourapplication";
+  let clientCode = ipoDetails.clientCode;
+
+  const url = `index.html?app=${encodeURIComponent(appValue)}&clientcode=${encodeURIComponent(clientCode)}`;
+  window.location.href = url;
+});
+
 
     let selectedInvestorType = "Retail";
     let selectedMinValue = null;
@@ -833,6 +840,8 @@ price.addEventListener('input', checkInputs);
     document.getElementById('applyButton').addEventListener('click', async function () {
   const ipoDetails = getDecryptedData();
 
+  console.log(ipoDetails, "details")
+const clientCode=ipoDetails.clientCode;
   const isin = ipoDetails.isin;
   const symbol = ipoDetails.ipoSymbol;
   const source = ipoDetails.isCompanyFrom;
@@ -871,7 +880,7 @@ price.addEventListener('input', checkInputs);
   }
 
   const formData = new FormData();
-  formData.append('clientCode', localStorage.getItem('clientcode'));
+  formData.append('clientCode', clientCode);
   formData.append('ipoSymbol', symbol);
   formData.append('isin', isin);
   formData.append('upiId', upiId);
