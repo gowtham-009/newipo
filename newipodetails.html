@@ -434,7 +434,33 @@
         <div class="px-4">
           <div class="font-bold text-gray-700 text-xl">Important Dates</div>
           <div class="mx-auto my-2">
-            <ul role="list" class="mt-6" id="importantDatesContainer"></ul>
+            <div class="grid grid-cols-2 grid-rows-3 gap-2">
+              <div class=" p-1">
+                <p class="text-gray-700">Allotment Date</p>
+                <p class="text-gray-500" id="date1"></p>
+              </div>
+              <div class=" p-1">
+                <p class="text-gray-700 text-right">Credit of Shares ToDemat</p>
+                <p class="text-gray-500 text-right" id="date2"></p>
+              </div>
+              <div class=" p-1">
+                <p class="text-gray-700">IPO Open date</p>
+                <p class="text-gray-500" id="date3"></p>
+              </div>
+              <div class=" p-1">
+                <p class="text-gray-700 text-right">IPO Close date</p>
+                <p class="text-gray-500 text-right" id="date4"></p>
+              </div>
+              <div class=" p-1">
+                <p class="text-gray-700">Initiation of Refunds</p>
+                <p class="text-gray-500" id="date5"></p>
+              </div>
+              <div class=" p-1">
+                <p class="text-gray-700 text-right">Listing date</p>
+                <p class="text-gray-500 text-right" id="date6"></p>
+              </div>
+            </div>
+            
           </div>
         </div>
         <div class="p-3 px-5">
@@ -472,13 +498,25 @@
             <div class="font-bold text-gray-700 text-xl">
               About the Company
             </div>
-            <div class="py-4" id="aboutCompany">Loading...</div>
+
+            <div class="max-w-md  ">
+              <p id="aboutCompany" class="text-gray-700 overflow-hidden transition-all duration-300 ease-in-out max-h-24" style="max-height: 3rem;">
+              
+              </p>
+              <button id="toggleBtn" class="mt-2 text-blue-500 hover:underline focus:outline-none">
+                Read More
+              </button>
+            </div>
+           
+
+          
+           
           </div>
           <div id="objectOfIssueSection">
             <div class="font-bold text-gray-700 text-xl">
               Object of the Issue
             </div>
-            <div class="pl-5 py-3" id="objectOfIssue">Loading...</div>
+            <div class=" " id="objectOfIssue"></div>
           </div>
         </div>
 
@@ -497,15 +535,26 @@
                         <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
                           Particulars
                         </th>
-                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                           Pre-Issue
                         </th>
-                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        <th scope="col" class="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                           Post-Issue
                         </th>
                       </tr>
                     </thead>
-                    <tbody class="bg-white" id="shareholdingPatternsContainer"></tbody>
+                    <tbody class="bg-white" id="shareholdingPatternsContainer">
+                      <tr class="border-b border-gray-200">
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                          Shareholding structure
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-center text-gray-700" id="preIssuePromoters">
+                         
+                        </td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-center text-gray-700" id="postIssuePromoters">
+                      
+                        </td>
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -532,10 +581,10 @@
 
             <div class="tab-content">
               <div class="content" id="content1">
-                <div id="strengthsContainer"></div>
+                <ul role="list" id="strengthsContainer"></ul>
               </div>
               <div class="content" id="content2">
-                <div id="risksContainer"></div>
+                <ul role="list" id="risksContainer"></ul>
               </div>
             </div>
           </div>
@@ -563,11 +612,13 @@
                     </div>
                   </div>
                   <div>
+                   <a href="" id="downloadLink" target="_blank">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                      stroke="blue" class="h-6 w-6 my-2">
-                      <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
+                    stroke="blue" class="h-6 w-6 my-2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                  </svg>
+                   </a>
                   </div>
                 </div>
               </li>
@@ -589,6 +640,23 @@
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
+
+const para = document.getElementById("aboutCompany");
+        const btn = document.getElementById("toggleBtn");
+      
+        let expanded = false;
+      
+        btn.addEventListener("click", () => {
+          expanded = !expanded;
+      
+          if (expanded) {
+            para.style.maxHeight = para.scrollHeight + "px";
+            btn.textContent = "Read Less";
+          } else {
+            para.style.maxHeight = "3rem";
+            btn.textContent = "Read More";
+          }
+        });
     // const clickableDivs = document.querySelectorAll(".clickable-div");
     // clickableDivs.forEach((div) => {
     //   div.addEventListener("click", function () {
@@ -658,6 +726,7 @@
       document.getElementById('loading').classList.add('hidden');
       document.getElementById('maincontent').classList.remove('hidden');
       datarendering(data)
+      aboutdetails()
     }
    
    
@@ -665,6 +734,81 @@
     console.error('Error fetching IPO details:', error.message);
   }
 };
+
+
+async function aboutdetails(){
+const apiurl='https://wthreeapi.w3webtechnologies.co.in/ipo/info.php?symbol=KENRIK'
+try {
+    const response = await fetch(apiurl, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Network error, please try again. Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if(data){
+      console.log(data) 
+      if(data.success===true){
+        function formatDate(isoDate) {
+    if (!isoDate) return ''; // Handle null or undefined
+    const [year, month, day] = isoDate.split('-');
+    return `${day}-${month}-${year}`;
+}
+
+document.getElementById('date1').innerText = formatDate(data.data.AllotmentDate);
+document.getElementById('date2').innerText = formatDate(data.data.CreditOfSharesToDemat);
+document.getElementById('date3').innerText = formatDate(data.data.IPOOpenDate);
+document.getElementById('date4').innerText = formatDate(data.data.IPOCloseDate);
+document.getElementById('date5').innerText = formatDate(data.data.InitiationOfRefunds);
+document.getElementById('date6').innerText = formatDate(data.data.ListingDate);
+document.getElementById('aboutCompany').innerText = data.data.AboutCompany;
+document.getElementById('objectOfIssue').innerText = data.data.ObjectiveOfIssue;
+document.getElementById('preIssuePromoters').innerText = data.data.ShareHoldingPreIssue+" %";
+document.getElementById('postIssuePromoters').innerText = data.data.ShareHoldingPostIssue+" %";
+const strengthsString = data.data.Strengths;
+  const strengthsArray = strengthsString.split('\r\n').filter(item => item.trim() !== '');
+
+  const container = document.getElementById('strengthsContainer');
+  container.innerHTML = '';
+
+  strengthsArray.forEach(strength => {
+    const li = document.createElement('li');
+    li.textContent = strength;
+    container.appendChild(li);
+  });
+  const risksString = data.data.Risks;
+const risksArray = risksString.split('\r\n').filter(item => item.trim() !== '');
+
+const risksContainer = document.getElementById('risksContainer');
+risksContainer.innerHTML = '';
+
+risksArray.forEach(risk => {
+  const li = document.createElement('li');
+  li.textContent = risk;
+  risksContainer.appendChild(li);
+});
+const pdfUrl = data.data.baseurl + data.data.DHRP_PDF_File;
+
+document.getElementById('downloadLink').addEventListener('click', function () {
+  this.href = pdfUrl;
+});
+
+
+
+
+      }
+    }
+   
+   
+  } catch (error) {
+    console.error('Error fetching IPO details:', error.message);
+  }
+}
+
+
 
 const datarendering=(ipodetails)=>{
  if(ipodetails.nse){
