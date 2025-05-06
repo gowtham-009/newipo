@@ -387,11 +387,11 @@ const cleanClientCode = clientCode?.replace(/^"|"$/g, "");
 
   const logoId = `logo-${company.symbol || Math.random().toString(36).substring(2, 9)}`;
   const dummylogo='./images/image.png'
+
   companyDiv.innerHTML = `
     <div class="flex items-center gap-x-4 border-gray-900/5 py-2 px-3 cursor-pointer" >
-      <div  class="size-12 flex items-center text-center justify-center font-semibold rounded-lg bg-white object-cover ring-1 ring-gray-900/10">
-        <img id="${logoId}" src="${dummylogo}"  alt="Company Logo" class="w-12 h-12 rounded-lg object-cover" />
-      </div>
+             <img id="${logoId}" src="${dummylogo}"  alt="Company Logo" class="w-12 h-12 rounded-lg object-cover" />
+
        <div class="text-sm/6 font-medium text-gray-900">
        <span> ${company.ipoName ? company.ipoName : company.companyName}</span>
          <div class="w-full flex gap-2">
@@ -463,12 +463,13 @@ const cleanClientCode = clientCode?.replace(/^"|"$/g, "");
   container.appendChild(companyDiv);
 
   try {
-    const response = await fetch(`https://wthreeapi.w3webtechnologies.co.in/ipo/info.php?symbol=${company.symbol}`);
+    const symbol = company.symbol || company.ipoSymbol
+    const response = await fetch(`https://ipo.gwcindia.in/admin/ipo-info-entry/info.php?symbol=${symbol}`);
     if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
     const data = await response.json();
 
     if (data && data.success === true) {
-      const logoUrl = data.data.baseurl + data.data.SymbolLogo;
+      const logoUrl = data.data.SymbolLogo;
       const logoImg = document.getElementById(logoId);
       if (logoImg) logoImg.src = logoUrl;
     }
@@ -646,6 +647,7 @@ function applicationFilter(filteredData) {
 const present = (data) => {
 
   
+  
   const applicationsList = document.getElementById("applicationsListnse");
   applicationsList.innerHTML = "";
 
@@ -751,62 +753,52 @@ const present = (data) => {
 
 
 
-const past = (data) => {
-
+const past = async (data) => {
   const applicationsList = document.getElementById("applicationsListbse");
   applicationsList.innerHTML = "";
 
-  if (data.length === 0) {
+  if (!Array.isArray(data) || data.length === 0) {
     applicationsList.innerHTML = "<li>No applications found.</li>";
     return;
   }
 
-  data.forEach((application) => {
-    let formattedDate = 'N/A';
-
+  for (const application of data) {
+    let formattedDate = "N/A";
     if (application.responseDateTime) {
-      const [year, month, day] = application.responseDateTime.split(' ')[0].split('-');
+      const [year, month, day] = application.responseDateTime.split(" ")[0].split("-");
       if (year && month && day) {
         formattedDate = `${day}-${month}-${year}`;
       }
     }
 
-    const applicationDiv = document.createElement("li");
-    applicationDiv.classList.add("overflow-hidden", "rounded-xl", "border", "border-gray-200", "py-2");
+    const listItem = document.createElement("li");
+    listItem.classList.add("overflow-hidden", "rounded-xl", "border", "border-gray-200", "py-2");
 
-    applicationDiv.addEventListener("click", () => {
-      if(application.applicationStatus === "failed" || application.appReqType === "D"){
-         
-      }
-      else{
+    listItem.addEventListener("click", () => {
+      if (application.applicationStatus !== "failed" && application.appReqType !== "D") {
         sendupdatedata(application, "applicationupdate.html");
       }
-    
     });
 
- 
-    applicationDiv.innerHTML = `
+    const logoId = `logo-${application.ipoSymbol || Math.random().toString(36).substring(2, 9)}`;
+ //  const dummyLogo = './images/image.png';
+ console.log(logoId)
+
+    listItem.innerHTML = `
       <div class="gap-x-4 border-gray-900/5 cursor-pointer">
         <div class="flex items-center gap-x-4 border-gray-900/5 py-2 px-3">
-          <div class="size-12 flex items-center justify-center font-semibold rounded-lg bg-white ring-1 ring-gray-900/10">IPO</div>
+          <img id="${logoId}"  alt="Company Logo" class="w-12 h-12 rounded-lg object-cover" />
           <div>
-            <div class="text-sm/6 font-medium text-gray-900">${application.ipoName || "N/A"} </div>
-   <span class="${application.source === 'NSE'
-          ? 'rounded-sm bg-red-500 px-1 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-red-500/20'
-          : 'rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10'
-        }">${application.source || "N/A"}</span>
-                    <span class="rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">MAINBOARD</span>
-${application.applicationStatus === "failed" ? `
-  <span class="rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-    Failed
-  </span>
-` : ''}
-
-${application.appReqType === "D" ? `
-  <span class="rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-    Cancelled
-  </span>
-` : ''}
+            <div class="text-sm/6 font-medium text-gray-900">${application.ipoName || "N/A"}</div>
+            <span class="${application.source === 'NSE'
+              ? 'rounded-sm bg-red-500 px-1 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-red-500/20'
+              : 'rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10'
+            }">${application.source || "N/A"}</span>
+            <span class="rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">MAINBOARD</span>
+            ${application.applicationStatus === "failed" ? `
+              <span class="rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Failed</span>` : ''}
+            ${application.appReqType === "D" ? `
+              <span class="rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Cancelled</span>` : ''}
           </div>
         </div>
         <div class="flex gap-2 w-full px-3">
@@ -827,11 +819,13 @@ ${application.appReqType === "D" ? `
               <dt class="text-gray-500">Listed On</dt>
               <dd class="text-gray-700 font-bold">
                 <time datetime="${application.requestedDateTime || ""}">
-                  ${application.requestedDateTime ? new Date(application.requestedDateTime).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  }) : "N/A"}
+                  ${application.requestedDateTime
+                    ? new Date(application.requestedDateTime).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : "N/A"}
                 </time>
               </dd>
             </div>
@@ -849,13 +843,34 @@ ${application.appReqType === "D" ? `
       </div>
     `;
 
-    applicationsList.appendChild(applicationDiv);
-  });
+    applicationsList.appendChild(listItem);
+
+    // Fetch and update logo
+    try {
+    const symbol =  application.ipoSymbol
+    const response = await fetch(`https://ipo.gwcindia.in/admin/ipo-info-entry/info.php?symbol=${symbol}`);
+    
+    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+    const data = await response.json();
+
+    if (data && data.success === true) {
+     
+      const logoUrl = data.data.SymbolLogo;
+      const logoImg = document.getElementById(logoId);
+     
+      if (logoImg) logoImg.src = logoUrl;
+   
+    }
+  } catch (error) {
+    console.error("Failed to load company logo:", error.message);
+  }
+  }
 };
 
 
+
     function sendDataToNewPage(company, url, source) {
-   // localStorage.setItem('clientcode',clientcodeapp)
+
       const iporequiredDetails = {
         clientCode: cleanClientCode,
         isin: company.isin,
