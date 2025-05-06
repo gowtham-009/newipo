@@ -476,8 +476,8 @@
               <table >
                 <thead>
                   <tr >
-                    <th class="text-gray-700 text-left" >Category	Subscription</th>
-                    <th class="text-gray-700 text-center" >Time</th>
+                    <th class="text-gray-700 text-left" >Category	</th>
+                    <th class="text-gray-700 text-right" >Subscription Time</th>
                   </tr>
                 </thead>
                 <tbody id="subscriptionDataContainer">
@@ -845,7 +845,7 @@ result.forEach(item => {
   const nameCell = document.createElement('td');
   const valueCell = document.createElement('td');
   nameCell.className = 'whitespace-nowrap px-3 py-4 text-sm text-gray-700';
-  valueCell.className = 'whitespace-nowrap px-3 text-center py-4 text-sm text-gray-700';
+  valueCell.className = 'whitespace-nowrap px-3 text-right py-4 text-sm text-gray-700';
   nameCell.innerText = item.name;
   valueCell.innerText = item.value;
   row.appendChild(nameCell);
