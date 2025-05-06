@@ -4,12 +4,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google" content="notranslate">
+
   <title>Application Update</title>
   <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body{
       overflow-y: hidden;
+      user-select: none;
+      -webkit-user-select: none;
     }
     .min-h-screen {
       min-height: calc(100vh - 4rem);
@@ -74,7 +78,7 @@
   </style>
 </head>
 
-<body>
+<body class="notranslate">
   <div class="overflow-hidden min-h-screen">
     <!-- Header Section -->
     <div class="block max-w-4xl mx-auto bg-blue-600 sm:relative sm:h-[80px] overflow-hidden">
