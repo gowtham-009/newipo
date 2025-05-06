@@ -275,7 +275,7 @@
   <script>
 
 const params = new URLSearchParams(window.location.search);
-const clientCode = params.get("clientcode");
+const clientCode = params.get("clientcode") ||'GZ10219';
 
 
 const cleanClientCode = clientCode?.replace(/^"|"$/g, "");

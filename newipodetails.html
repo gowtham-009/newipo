@@ -309,7 +309,8 @@
         <div class="flex px-3 gap-2 py-2 pt-4">
           <div
             class="size-12 flex items-center text-center justify-center  mt-4  px-2 font-semibold rounded-lg bg-white object-cover ring-1 ring-gray-900/10 ">
-            IPO</div>
+           <img src="" id="logoimage" alt="" class="size-12 rounded-full object-cover" />
+          </div>
 
           <div>
             <div class="text-xl font-bold text-gray-900  px-4 py-2" id="companyName">
@@ -463,37 +464,33 @@
             
           </div>
         </div>
-        <div class="p-3 px-5">
-          <div class="flex justify-between gap-x-4 py-5 p-3 rounded-md bg-gray-100">
-            <div class="flex gap-x-4">
-              <dt class="text-gray-500">
-                <span
-                  class="inline-flex items-center rounded-md bg-white px-1.5 py-0.5 text-xs font-medium text-gray-600">Day
-                  1</span>
-              </dt>
-              <dt>
-                <div class="font-medium text-gray-900">
-                  Overall Subscriptions
-                </div>
-              </dt>
-              <dd class="flex items-start gap-x-2">
-                <div class="font-semibold text-green-600" id="overallSubscriptions">
-                  0.00X
-                </div>
-              </dd>
-            </div>
-            <div>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="gray"
-                class="h-6 w-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
+       
+        <div class="bg-gray-100 h-2 my-5"></div>
+
+
+        <div class="px-4">
+          
+          <div class="mx-auto my-2">
+            <div class="grid grid-cols-1  gap-2">
+             
+              <table >
+                <thead>
+                  <tr >
+                    <th class="text-gray-700 text-left" >Category	Subscription</th>
+                    <th class="text-gray-700 text-center" >Time</th>
+                  </tr>
+                </thead>
+                <tbody id="subscriptionDataContainer">
+                  <!-- Subscription data will be populated here -->
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-
+        <div class="bg-gray-100 h-2 my-5"></div>
         <div class="p-3 px-5">
           <div id="aboutCompanySection">
-            <div class="bg-gray-100 h-2 my-5"></div>
+         
 
             <div class="font-bold text-gray-700 text-xl">
               About the Company
@@ -770,7 +767,6 @@ document.getElementById('preIssuePromoters').innerText = data.data.ShareHoldingP
 document.getElementById('postIssuePromoters').innerText = data.data.ShareHoldingPostIssue+" %";
 const strengthsString = data.data.Strengths;
   const strengthsArray = strengthsString.split('\r\n').filter(item => item.trim() !== '');
-
   const container = document.getElementById('strengthsContainer');
   container.innerHTML = '';
 
@@ -796,10 +792,68 @@ document.getElementById('downloadLink').addEventListener('click', function () {
   this.href = pdfUrl;
 });
 
+document.getElementById('logoimage').src=data.data.baseurl + data.data.SymbolLogo
+
+
+const input = data.data;
+const result = [];
+
+const keys = Object.keys(input);
+const indexSet = new Set();
+
+// Extract all unique index numbers from keys (e.g. 1 from Name11, 2 from Name21, etc.)
+keys.forEach(key => {
+  const match = key.match(/^Name(\d+)[12]$/);
+  if (match) {
+    indexSet.add(match[1]);
+  }
+});
+
+let total = 0;
+let count = 0;
+
+// For each index, grab the corresponding name and value
+indexSet.forEach(index => {
+  const name = input[`Name${index}1`];
+  const valueStr = input[`Name${index}2`];
+  const value = parseFloat(valueStr);
+
+  if (name || valueStr) {
+    result.push({ name, value });
+  }
+
+  if (!isNaN(value)) {
+    total += value;
+    count++;
+  }
+});
+
+// Add the total row
+if (count > 0) {
+  result.push({ name: "Total", value: (total / count).toFixed(2) });
+
+}
+
+console.log(result);
 
 
 
+
+document.getElementById('subscriptionDataContainer').innerHTML = '';
+result.forEach(item => {
+  const row = document.createElement('tr');
+  const nameCell = document.createElement('td');
+  const valueCell = document.createElement('td');
+  nameCell.className = 'whitespace-nowrap px-3 py-4 text-sm text-gray-700';
+  valueCell.className = 'whitespace-nowrap px-3 text-center py-4 text-sm text-gray-700';
+  nameCell.innerText = item.name;
+  valueCell.innerText = item.value;
+  row.appendChild(nameCell);
+  row.appendChild(valueCell);
+  document.getElementById('subscriptionDataContainer').appendChild(row);
+});
       }
+     
     }
    
    
