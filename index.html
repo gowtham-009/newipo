@@ -364,13 +364,30 @@ const cleanClientCode = clientCode?.replace(/^"|"$/g, "");
     }
 
 
-    async function addCompanyToContainer(company, container, type, source) {
+    async function addCompanyToContainer(company, container, type, source, index = 0) {
+  if (company.issueType === 'DEBT' || company.issuetype === 'DEPT') return;
 
-  // Skip rendering if issueType is "DEBT"
-  if (company.issueType === 'DEBT' || company.issuetype==='DEPT') { 
-    return;
+  const dummyLogo = './images/image.png';
+  let logoUrl = dummyLogo;
+
+  // Determine symbol for logo fetch
+  const symbol = company.symbol || company.scripcode || company.companySymbol;
+
+  if (symbol) {
+    try {
+      const res = await fetch(`https://ipo.gwcindia.in/admin/ipo-info-entry/info.php?symbol=${symbol}`);
+      if (res.ok) {
+        const ipoInfo = await res.json();
+        if (ipoInfo.success && ipoInfo.data?.SymbolLogo) {
+          logoUrl = ipoInfo.data.SymbolLogo;
+        }
+      }
+    } catch (err) {
+      console.error("Logo fetch failed:", err);
+    }
   }
 
+  const logoId = `logo-${index}-${Date.now()}`;
   const companyDiv = document.createElement("li");
   companyDiv.classList.add(
     "overflow-hidden",
@@ -381,102 +398,79 @@ const cleanClientCode = clientCode?.replace(/^"|"$/g, "");
     "clickable-div"
   );
 
-  companyDiv.addEventListener("click", function () {
+  companyDiv.addEventListener("click", () => {
     sendDataToNewPage(company, "newipodetails.html", source);
   });
 
-  const logoId = `logo-${company.symbol || Math.random().toString(36).substring(2, 9)}`;
-  const dummylogo='./images/image.png'
-
   companyDiv.innerHTML = `
-    <div class="flex items-center gap-x-4 border-gray-900/5 py-2 px-3 cursor-pointer" >
-             <img id="${logoId}" src="${dummylogo}"  alt="Company Logo" class="w-12 h-12 rounded-lg object-cover" />
+    <div class="flex items-center gap-x-4 border-gray-900/5 py-2 px-3 cursor-pointer">
+      <img id="${logoId}" src="${logoUrl}" alt="Company Logo" class="w-12 h-12 rounded-lg object-cover" />
+      <div class="text-sm/6 font-medium text-gray-900">
+        <span>${company.ipoName || company.companyName}</span>
+        <div class="w-full flex gap-2 mt-1">
+          <span class="${source === 'NSE'
+            ? 'rounded-sm bg-red-500 px-1 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-red-500/20'
+            : 'rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10'
+          }">${source}</span>
 
-       <div class="text-sm/6 font-medium text-gray-900">
-       <span> ${company.ipoName ? company.ipoName : company.companyName}</span>
-         <div class="w-full flex gap-2">
-              <span class="${source === 'NSE'
-                ? 'rounded-sm bg-red-500 px-1 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-red-500/20'
-                : 'rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10'
-              }">${source}</span>
+          <span class="rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">${type}</span>  
 
-              <span class="rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">${type}</span>  
-
-              <span class="rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">${company.subType || company.issuetype || ''}</span>  
-          </div>
-        
+          <span class="rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">
+            ${company.subType || company.issuetype || ''}
+          </span>  
         </div>
-        </div>
-        
-        <div>
-           
-         
-        </div>
+      </div>
     </div>
+
     <dl class="-my-3 divide-y divide-gray-100 px-3 py-4 text-sm/6">
-        <div class="flex justify-between gap-x-4 py-3">
-            <div>
-                <dt class="text-gray-500">Opens on</dt>
-                <dd class="text-gray-700 font-bold">
-                  <time datetime="${company.biddingStartDate || company.opendate}">
-                    ${new Date(company.biddingStartDate || company.opendate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
-                  </time>
-                </dd>
-            </div>
-            <div>
-                <dt class="text-gray-500 flex justify-end">Minimum Investment</dt>
-                <dd class="text-gray-700 font-bold flex items-center justify-end" id="maxInvestment">
-                  ${calculateMaxInvestment(
-                    company.minPrice ? company.minPrice : company.floorprice,
-                    company.lotSize ? company.lotSize : company.tradinglot
-                  )}
-                </dd>
-            </div>
-        </div>
-
-        <div class="w-full flex">
-          <div class="w-full">
-            <dt class="text-gray-500">Close</dt>
-            <dd class="text-gray-700 font-bold">
-              <time datetime="${company.biddingEndDate || company.closedate}">
-                ${new Date(company.biddingEndDate || company.closedate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
-              </time>
-            </dd>
-          </div>
-
-          <div class="w-full flex justify-end items-center">
-            <span class="ml-2 text-gray-700 font-bold">${company.minBidQuantity || company.tradinglot} shares</span>
-          </div>
-        </div>
-
-        <div class="flex justify-between gap-x-4 p-3 rounded-md bg-gray-100">
-          <dt>
-            <div class="font-bold text-gray-900">Overall Subscription</div>
-          </dt>
-          <dd class="flex items-start gap-x-2">
-            <div class="font-semibold text-green-600">0.71x</div>
+      <div class="flex justify-between gap-x-4 py-3">
+        <div>
+          <dt class="text-gray-500">Opens on</dt>
+          <dd class="text-gray-700 font-bold">
+            <time datetime="${company.biddingStartDate || company.opendate}">
+              ${new Date(company.biddingStartDate || company.opendate).toLocaleDateString("en-GB", {
+                day: "2-digit", month: "short", year: "numeric"
+              })}
+            </time>
           </dd>
         </div>
+        <div>
+          <dt class="text-gray-500 flex justify-end">Minimum Investment</dt>
+          <dd class="text-gray-700 font-bold flex items-center justify-end">
+            ${calculateMaxInvestment(
+              company.minPrice || company.floorprice,
+              company.lotSize || company.tradinglot
+            )}
+          </dd>
+        </div>
+      </div>
+
+      <div class="w-full flex">
+        <div class="w-full">
+          <dt class="text-gray-500">Close</dt>
+          <dd class="text-gray-700 font-bold">
+            <time datetime="${company.biddingEndDate || company.closedate}">
+              ${new Date(company.biddingEndDate || company.closedate).toLocaleDateString("en-GB", {
+                day: "2-digit", month: "short", year: "numeric"
+              })}
+            </time>
+          </dd>
+        </div>
+        <div class="w-full flex justify-end items-center">
+          <span class="ml-2 text-gray-700 font-bold">${company.minBidQuantity || company.tradinglot} shares</span>
+        </div>
+      </div>
+
+      <div class="flex justify-between gap-x-4 p-3 rounded-md bg-gray-100">
+        <dt><div class="font-bold text-gray-900">Overall Subscription</div></dt>
+        <dd class="font-semibold text-green-600">0.71x</dd>
+      </div>
     </dl>
   `;
 
   container.appendChild(companyDiv);
-
-  try {
-    const symbol = company.symbol || company.ipoSymbol
-    const response = await fetch(`https://ipo.gwcindia.in/admin/ipo-info-entry/info.php?symbol=${symbol}`);
-    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-    const data = await response.json();
-
-    if (data && data.success === true) {
-      const logoUrl = data.data.SymbolLogo;
-      const logoImg = document.getElementById(logoId);
-      if (logoImg) logoImg.src = logoUrl;
-    }
-  } catch (error) {
-    console.error("Failed to load company logo:", error.message);
-  }
 }
+
 
     fetchCompanies();
     function updateIpoCount(nseCount, bseCount, debtCount) {
@@ -645,9 +639,6 @@ function applicationFilter(filteredData) {
 }
 
 const present = (data) => {
-
-  
-  
   const applicationsList = document.getElementById("applicationsListnse");
   applicationsList.innerHTML = "";
 
@@ -656,7 +647,7 @@ const present = (data) => {
     return;
   }
 
-  data.forEach((application) => {
+  data.forEach(async (application, index) => {
     let formattedDate = 'N/A';
 
     if (application.responseDateTime) {
@@ -666,45 +657,52 @@ const present = (data) => {
       }
     }
 
+    // Fetch IPO info based on symbol
+    let logoUrl = './images/image.png'; // default logo
+    if (application.ipoSymbol) {
+      try {
+        const response = await fetch(`https://ipo.gwcindia.in/admin/ipo-info-entry/info.php?symbol=${application.ipoSymbol}`);
+        if (response.ok) {
+          const ipoInfo = await response.json();
+          if (ipoInfo.success && ipoInfo.data && ipoInfo.data.SymbolLogo) {
+            logoUrl = ipoInfo.data.SymbolLogo;
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching IPO info:", error);
+      }
+    }
+
+    const logoId = `srcval-${index}`;
+
     const applicationDiv = document.createElement("li");
     applicationDiv.classList.add("overflow-hidden", "rounded-xl", "border", "border-gray-200", "py-2");
 
     applicationDiv.addEventListener("click", () => {
-      if(application.applicationStatus === "failed" || application.appReqType === "D"){
-         
-         
-        }
-        else{
-          sendupdatedata(application, "applicationupdate.html");
-        }
+      if (application.applicationStatus === "failed" || application.appReqType === "D") {
+        return;
+      } else {
+        sendupdatedata(application, "applicationupdate.html");
+      }
     });
 
     applicationDiv.innerHTML = `
       <div class="gap-x-4 border-gray-900/5 cursor-pointer">
         <div class="flex items-center gap-x-4 border-gray-900/5 py-2 px-3">
-          <div class="size-12 flex items-center justify-center font-semibold rounded-lg bg-white ring-1 ring-gray-900/10">IPO</div>
+          <img id="${logoId}" src="${logoUrl}" alt="Company Logo" class="w-12 h-12 rounded-lg object-cover" />
           <div>
             <div class="text-sm/6 font-medium text-gray-900">${application.ipoName || "N/A"}</div>
-
-
-             <span class="${application.source === 'NSE'
-          ? 'rounded-sm bg-red-500 px-1 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-red-500/20'
-          : 'rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10'
-        }">${application.source || "N/A"}</span>
-                        
-
+            <span class="${application.source === 'NSE'
+              ? 'rounded-sm bg-red-500 px-1 py-0.5 text-xs font-medium text-white ring-1 ring-inset ring-red-500/20'
+              : 'rounded-sm bg-indigo-50 px-1 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10'
+            }">${application.source || "N/A"}</span>
             <span class="rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-600/10">MAINBOARD</span>
             ${application.applicationStatus === "failed" ? `
-  <span class="rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-    Failed
-  </span>
-` : ''}
-
- ${application.appReqType === "D" ? `
-  <span class="rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-    Cancelled
-  </span>
-` : ''}
+              <span class="rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Failed</span>
+            ` : ''}
+            ${application.appReqType === "D" ? `
+              <span class="rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">Cancelled</span>
+            ` : ''}
           </div>
         </div>
         <div class="flex gap-2 w-full px-3">
@@ -762,7 +760,7 @@ const past = async (data) => {
     return;
   }
 
-  for (const application of data) {
+  for (const [index, application] of data.entries()) {
     let formattedDate = "N/A";
     if (application.responseDateTime) {
       const [year, month, day] = application.responseDateTime.split(" ")[0].split("-");
@@ -771,6 +769,23 @@ const past = async (data) => {
       }
     }
 
+    // Fetch IPO logo
+    let logoUrl = './images/image.png'; // Default fallback
+    if (application.ipoSymbol) {
+      try {
+        const response = await fetch(`https://ipo.gwcindia.in/admin/ipo-info-entry/info.php?symbol=${application.ipoSymbol}`);
+        if (response.ok) {
+          const ipoInfo = await response.json();
+          if (ipoInfo.success && ipoInfo.data && ipoInfo.data.SymbolLogo) {
+            logoUrl = ipoInfo.data.SymbolLogo;
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching IPO info:", error);
+      }
+    }
+
+    const logoId = `srcval-bse-${index}`;
     const listItem = document.createElement("li");
     listItem.classList.add("overflow-hidden", "rounded-xl", "border", "border-gray-200", "py-2");
 
@@ -780,14 +795,10 @@ const past = async (data) => {
       }
     });
 
-    const logoId = `logo-${application.ipoSymbol || Math.random().toString(36).substring(2, 9)}`;
- //  const dummyLogo = './images/image.png';
- console.log(logoId)
-
     listItem.innerHTML = `
       <div class="gap-x-4 border-gray-900/5 cursor-pointer">
         <div class="flex items-center gap-x-4 border-gray-900/5 py-2 px-3">
-          <img id="${logoId}"  alt="Company Logo" class="w-12 h-12 rounded-lg object-cover" />
+          <img id="${logoId}" src="${logoUrl}" alt="Company Logo" class="w-12 h-12 rounded-lg object-cover" />
           <div>
             <div class="text-sm/6 font-medium text-gray-900">${application.ipoName || "N/A"}</div>
             <span class="${application.source === 'NSE'
@@ -844,26 +855,6 @@ const past = async (data) => {
     `;
 
     applicationsList.appendChild(listItem);
-
-    // Fetch and update logo
-    try {
-    const symbol =  application.ipoSymbol
-    const response = await fetch(`https://ipo.gwcindia.in/admin/ipo-info-entry/info.php?symbol=${symbol}`);
-    
-    if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-    const data = await response.json();
-
-    if (data && data.success === true) {
-     
-      const logoUrl = data.data.SymbolLogo;
-      const logoImg = document.getElementById(logoId);
-     
-      if (logoImg) logoImg.src = logoUrl;
-   
-    }
-  } catch (error) {
-    console.error("Failed to load company logo:", error.message);
-  }
   }
 };
 
