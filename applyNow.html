@@ -607,12 +607,16 @@ document.getElementById('logoimage').src = image
     const fetchIpoInfo = async () => {
       const ipoDetails = getDecryptedData();
 
+      console.log("guygugiguigui",ipoDetails)
+
       try {
         const isin = ipoDetails.isin;
         const symbol = ipoDetails.ipoSymbol;
         const investormode = ipoDetails.investortype;
 
         document.getElementById('maxlots').value = ipoDetails.lotsvalue;
+
+        console.log("jniuodnsh", ipoDetails.lotsvalue)
 
         const response = await fetch(
           `https://ipo.gwcindia.in/nse-api/api-ipo-info.php?isin=${isin}&symbol=${symbol}`
@@ -725,90 +729,88 @@ document.getElementById('logoimage').src = image
 
     let investor
     const investmentfunction = (cacode) => {
-      const ipoDetails = getDecryptedData();
-      console.log("khiu", cacode, ipoDetails)
+  const ipoDetails = getDecryptedData();
+  
+  // Show/hide NSE retail switch message
+  if (cacode === 'Retail' && ipoDetails.isCompanyFrom === 'NSE') {
+    document.getElementById('nseretail').classList.remove('hidden');
+  } else {
+    document.getElementById('nseretail').classList.add('hidden');
+  }
 
-      if (cacode === 'Retail' && ipoDetails.isCompanyFrom === 'NSE') {
-        document.getElementById('nseretail').classList.remove('hidden')
-      } else {
-        document.getElementById('nseretail').classList.add('hidden')
-      }
+  // Reset lot count to 1 when switching investor types
+  document.getElementById('lotCount').innerText = 1;
+  investor = cacode;
 
+  // Get the investor-specific values
+  const discountInput = document.getElementById(`${cacode}-discountprice`);
+  const minInput = document.getElementById(`${cacode}-minprice`);
+  const maxInput = document.getElementById(`${cacode}-maxprice`);
+  const shareval = document.getElementById('shareval').value;
+  const price = parseFloat(document.getElementById('price').value) || 0;
 
-      document.getElementById('lotCount').innerText = 1
+  // Calculate maximum lots based on investor type
+  const maxInvestment = parseFloat(maxInput.value);
+  const maxPricePerLot = price * shareval;
+  const maxLots = Math.floor(maxInvestment / maxPricePerLot);
 
-      investor = cacode
-      updateTotalAmount(1, document.getElementById('price').value)
-      checkInputs()
-      const lotCountDisplay = document.getElementById("lotCount");
-      let lotCount = 1;
-      const incrementButton = document.getElementById("increment");
-      const decrementButton = document.getElementById("decrement");
-      const priceAmount = document.getElementById('price');
+  // Store the max lots in hidden field
+  document.getElementById('maxlots').value = maxLots;
 
+  // Update the total amount display
+  updateTotalAmount(1, price);
+  checkInputs();
 
-      function updateTotalAmount(lotSize, price) {
+  const lotCountDisplay = document.getElementById("lotCount");
+  let lotCount = 1;
+  const incrementButton = document.getElementById("increment");
+  const decrementButton = document.getElementById("decrement");
+  const priceAmount = document.getElementById('price');
 
-        const discountInput = document.getElementById(`${cacode}-discountprice`);
-        const minInput = document.getElementById(`${cacode}-minprice`);
-        const maxInput = document.getElementById(`${cacode}-maxprice`);
+  function updateTotalAmount(lotSize, price) {
+    const shareval = document.getElementById('shareval').value;
+    const discountInput = document.getElementById(`${cacode}-discountprice`);
+    
+    const calculation = lotSize * price;
+    const totalval = calculation * shareval;
+    document.getElementById('qty').value = lotSize * shareval;
+    const discountrate = lotSize * (shareval * discountInput.value);
+    const finalamount = totalval - discountrate;
+    
+    document.getElementById('amount').innerText = "₹" + " " + totalval;
+    document.getElementById('discountamount').innerText = "₹" + " " + discountrate;
+    document.getElementById('finalamount').value = finalamount;
+    document.getElementById('totalAmount').innerText = "₹" + " " + finalamount;
+  }
 
-        const shareval = document.getElementById('shareval').value
+  priceAmount.addEventListener('input', function() {
+    const price = parseFloat(priceAmount.value) || 0;
+    const lotCountVal = parseInt(lotCountDisplay.innerText, 10);
+    updateTotalAmount(lotCountVal, price);
+    checkInputs();
+  });
 
-        const calculation = lotSize * price;
-        const totalval = calculation * shareval
-        document.getElementById('qty').value = lotSize * shareval
-        const discountrate = lotSize * (shareval * discountInput.value)
+  incrementButton.addEventListener("click", () => {
+    const maxLots = parseInt(document.getElementById('maxlots').value);
+    if (lotCount < maxLots) {
+      lotCount++;
+      lotCountDisplay.textContent = lotCount;
+      const price = parseFloat(priceAmount.value) || 0;
+      updateTotalAmount(lotCount, price);
+      checkInputs();
+    }
+  });
 
-        const finalamount = totalval - discountrate
-        document.getElementById('amount').innerText = "₹" + " " + totalval
-        document.getElementById('discountamount').innerText = "₹" + " " + discountrate
-        document.getElementById('finalamount').value = finalamount
-        document.getElementById('totalAmount').innerText = "₹" + " " + finalamount;
-
-
-      }
-
-
-      priceAmount.addEventListener('input', function () {
-        const price = parseFloat(priceAmount.value) || 0;
-        const lotCountVal = parseInt(lotCountDisplay.innerText, 10);
-        updateTotalAmount(lotCountVal, price);
-        checkInputs()
-      });
-      incrementButton.addEventListener("click", () => {
-
-        const maxLotSize = parseInt(
-          document.getElementById("lotSize").textContent
-        );
-        if (lotCount < maxLotSize) {
-          lotCount++;
-          lotCountDisplay.textContent = lotCount;
-          const price = parseFloat(priceAmount.value) || 0;
-          updateTotalAmount(
-            lotCount, price
-          );
-          checkInputs()
-        }
-      });
-
-      decrementButton.addEventListener("click", () => {
-
-        if (lotCount > 1) {
-          lotCount--;
-          lotCountDisplay.textContent = lotCount;
-          const price = parseFloat(priceAmount.value) || 0;
-
-          updateTotalAmount(
-            lotCount, price
-          );
-          checkInputs()
-
-        }
-      });
-    };
-
-
+  decrementButton.addEventListener("click", () => {
+    if (lotCount > 1) {
+      lotCount--;
+      lotCountDisplay.textContent = lotCount;
+      const price = parseFloat(priceAmount.value) || 0;
+      updateTotalAmount(lotCount, price);
+      checkInputs();
+    }
+  });
+};
 
     function showModal(title, message) {
       document.getElementById("modalTitle").textContent = title;

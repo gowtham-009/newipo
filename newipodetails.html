@@ -1175,90 +1175,98 @@
     let discountpricevalue;
     let lotsvalue;
 
+    let minLots;
+let maxLots;
     const investmentfunction = (cacode, responsedata) => {
-      investorType = cacode;
+  investorType = cacode;
 
-      const discountInput = document.getElementById(`${cacode}-discountprice`);
-      const minInput = document.getElementById(`${cacode}-minprice`);
-      const maxInput = document.getElementById(`${cacode}-maxprice`);
+  const discountInput = document.getElementById(`${cacode}-discountprice`);
+  const minInput = document.getElementById(`${cacode}-minprice`);
+  const maxInput = document.getElementById(`${cacode}-maxprice`);
 
-      const discountPrice = Number(discountInput.value);
-      const minPrice = Number(minInput.value);
-      const maxPrice = Number(maxInput.value);
-      discountpricevalue = discountPrice;
+  const discountPrice = Number(discountInput.value);
+  const minPrice = Number(minInput.value);
+  const maxPrice = Number(maxInput.value);
+  discountpricevalue = discountPrice;
 
-      let bidPrice, bidMaxPrice, lotSize;
+  let bidPrice, bidMaxPrice, lotSize;
 
-      if (responsedata.nse) {
-        bidPrice = Number(responsedata.nse.minPrice);
-        bidMaxPrice = Number(responsedata.nse.maxPrice);
-        lotSize = Number(responsedata.nse.lotSize);
-      } else if (responsedata.metaData) {
-        const parametersObject = getDecryptedData();
-        const meta = responsedata.metaData[parametersObject.isin];
-        bidPrice = Number(meta.floorprice);
-        bidMaxPrice = Number(meta.ceilingprice);
-        lotSize = Number(meta.tradinglot);
-      } else {
-        console.error("Invalid data format");
-        return;
-      }
+  if (responsedata.nse) {
+    bidPrice = Number(responsedata.nse.minPrice);
+    bidMaxPrice = Number(responsedata.nse.maxPrice);
+    lotSize = Number(responsedata.nse.lotSize);
+  } else if (responsedata.metaData) {
+    const parametersObject = getDecryptedData();
+    const meta = responsedata.metaData[parametersObject.isin];
+    bidPrice = Number(meta.floorprice);
+    bidMaxPrice = Number(meta.ceilingprice);
+    lotSize = Number(meta.tradinglot);
+  } else {
+    console.error("Invalid data format");
+    return;
+  }
 
-      const minInvestmentPerLot = bidPrice * lotSize;
-      const maxInvestmentPerLot = bidMaxPrice * lotSize;
+  const minInvestmentPerLot = bidPrice * lotSize;
+  const maxInvestmentPerLot = bidMaxPrice * lotSize;
 
-      document.getElementById('retailDiscount').innerText = "₹ " + discountPrice.toLocaleString();
+  document.getElementById('retailDiscount').innerText = "₹ " + discountPrice.toLocaleString();
 
-      const maxLots = Math.floor(maxPrice / maxInvestmentPerLot);
-      const totalMaxInvestment = maxLots * maxInvestmentPerLot;
+  maxLots = Math.floor(maxPrice / maxInvestmentPerLot);
+  const totalMaxInvestment = maxLots * maxInvestmentPerLot;
 
-      if (minPrice <= 0) {
-        document.getElementById('minimumInvestment').innerText = `1 Lot / ₹ ${minInvestmentPerLot.toLocaleString()}`;
-        document.getElementById('maximumInvestment').innerText =
-          `${maxLots} ${maxLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMaxInvestment.toLocaleString()}`;
-        lotsvalue = maxLots;
-      } else {
-        let minLots = Math.floor(minPrice / minInvestmentPerLot);
-        let totalMinInvestment = minLots * minInvestmentPerLot;
+  if (minPrice <= 0) {
+    minLots = 1;
+    document.getElementById('minimumInvestment').innerText = `1 Lot / ₹ ${minInvestmentPerLot.toLocaleString()}`;
+    document.getElementById('maximumInvestment').innerText =
+      `${maxLots} ${maxLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMaxInvestment.toLocaleString()}`;
+    lotsvalue = maxLots;
+  } else {
+    minLots = Math.floor(minPrice / minInvestmentPerLot);
+    let totalMinInvestment = minLots * minInvestmentPerLot;
 
-        while (totalMinInvestment < minPrice) {
-          minLots++;
-          totalMinInvestment = minLots * minInvestmentPerLot;
-        }
+    while (totalMinInvestment < minPrice) {
+      minLots++;
+      totalMinInvestment = minLots * minInvestmentPerLot;
+    }
 
-        if (totalMinInvestment > totalMaxInvestment) {
-          document.getElementById('minimumInvestment').innerText = "Invalid range: min > max";
-          document.getElementById('maximumInvestment').innerText = "Please adjust values";
-          return;
-        }
+    if (totalMinInvestment > totalMaxInvestment) {
+      document.getElementById('minimumInvestment').innerText = "Invalid range: min > max";
+      document.getElementById('maximumInvestment').innerText = "Please adjust values";
+      return;
+    }
 
-        document.getElementById('minimumInvestment').innerText =
-          `${minLots} ${minLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMinInvestment.toLocaleString()}`;
-        document.getElementById('maximumInvestment').innerText =
-          `${maxLots} ${maxLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMaxInvestment.toLocaleString()}`;
-        lotsvalue = maxLots;
-      }
-    };
+    document.getElementById('minimumInvestment').innerText =
+      `${minLots} ${minLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMinInvestment.toLocaleString()}`;
+    document.getElementById('maximumInvestment').innerText =
+      `${maxLots} ${maxLots <= 1 ? "Lot" : "Lots"} / ₹ ${totalMaxInvestment.toLocaleString()}`;
+    lotsvalue = maxLots;
+  }
+};
 
 
     function redirect() {
-      const parametersObject = getDecryptedData();
+  const parametersObject = getDecryptedData();
 
-      const applydata = {
-        clientCode: parametersObject.clientCode,
-        investortype: investorType,
-        ipoSymbol: parametersObject.ipoSymbol,
-        isCompanyFrom: parametersObject.isCompanyFrom,
-        isin: parametersObject.isin
-      }
-      var jsonString = JSON.stringify(applydata);
+  const applydata = {
+    clientCode: parametersObject.clientCode,
+    investortype: investorType,
+    ipoSymbol: parametersObject.ipoSymbol,
+    isCompanyFrom: parametersObject.isCompanyFrom,
+    isin: parametersObject.isin,
+    minimuminvestment: minLots,
+    maximuminvestment: maxLots,
+    discountPrice: discountpricevalue
+  };
 
-      var secretKey = "ipodetailsdata01"; // Choose a strong key
-      var encrypted = CryptoJS.AES.encrypt(jsonString, secretKey).toString();
-      var encoded = encodeURIComponent(encrypted);
-      console.log(encoded)
-      window.location.href = `applyNow.html?data=${encoded}`
-    }
+  console.log("lsfjvhiod",applydata)
+  
+  var jsonString = JSON.stringify(applydata);
+
+  var secretKey = "ipodetailsdata01";
+  var encrypted = CryptoJS.AES.encrypt(jsonString, secretKey).toString();
+  var encoded = encodeURIComponent(encrypted);
+  window.location.href = `applyNow.html?data=${encoded}`;
+}
 
 
   </script>
