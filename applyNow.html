@@ -227,9 +227,9 @@
         <div class="w-full flex justify-between">
           <div class="px-5 py-2 text-gray-600 lotsizeget text-sm flex justify-start"></div>
 
-          <!-- <div class="sumlots p-1 flex gap-1 px-6">
-              <p class="text-gray-500" id="lotssum"></p><p class="text-gray-500">Shares</p>
-            </div> -->
+          <div class=" p-1 flex gap-1 px-6">
+              <p class="text-gray-500">Maximum Lot Size:</p><p class="text-gray-500" id="maxlotsin"></p>
+            </div>
         </div>
 
         <div class="px-5">
@@ -756,6 +756,9 @@ document.getElementById('logoimage').src = image
 
   // Store the max lots in hidden field
   document.getElementById('maxlots').value = maxLots;
+
+
+  document.getElementById('maxlotsin').innerText = maxLots;
 
   // Update the total amount display
   updateTotalAmount(1, price);
