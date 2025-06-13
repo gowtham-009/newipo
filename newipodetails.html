@@ -744,14 +744,22 @@
 
 
     async function aboutdetails(datasymbol, isin) {
-      let symbol;
-      if (datasymbol.metaData[isin]) {
-        symbol = datasymbol.metaData[isin].symbol
-      }
-      else {
-        symbol = datasymbol.nse.ipoSymbol
-      }
+     
+  let symbol;
 
+  if (datasymbol.metaData && datasymbol.metaData[isin]) {
+    symbol = datasymbol.metaData[isin].symbol;
+  } else if (datasymbol.nse && datasymbol.nse.isin === isin) {
+    symbol = datasymbol.nse.ipoSymbol;
+  } else {
+    // fallback if nothing matches
+    console.warn("Symbol not found for ISIN:", isin);
+    symbol = null;
+  }
+
+
+  
+   
       //console.log(, "datasymbol")
 
       const apiurl = `https://ipo.gwcindia.in/admin/ipo-info-entry/info.php?symbol=${symbol}`
